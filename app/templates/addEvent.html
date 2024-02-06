@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html data-bs-theme="dark">
+<head>
+    <title>Register</title>
+</head>
+<body>
+	{{ template "Header" }}
+    <h1>Add a new Event</h1>
+    <form action="/addEvent" method="post">
+
+        <label for="description">Description:</label>
+        <input type="text" name="description" required><br>
+        
+	<label for="when">When:</label>
+        <input type="text" name="when" placeholder="2024-01-01" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" required><br>
+
+	<label for="password">Please Enter Password:</label>
+	<input type="password" name="password" required><br>
+
+        <input type="submit" value="Create Event">
+    </form>
+
+    <br><br>
+	{{ if . }}
+    		{{ . }}
+	{{ end }}
+</body>
+</html>
+
