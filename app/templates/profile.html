@@ -2,9 +2,9 @@
 <html data-bs-theme="dark">
 <head>
     <title>Profile - {{.Username}}</title>
+    {{ template "Header" }}
 </head>
 <body>
-	{{ template "Header" }}
 	<br><br>
 	<div style = "margin:auto; width:50%; border: 3px solid black; padding:10px; border-radius: 25px;">
     		<h1 style = "text-transform:capitalize;">Welcome {{.Username}}</h1>

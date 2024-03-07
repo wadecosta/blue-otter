@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html data-bs-theme="dark">
 <head>
-    <title>Profile - {{.Username}}</title>
-    {{ template "Header" }}
+    <title>Dashboard - {{.Username}}</title>
+    {{ template "Header" . }}
 </head>
 <body>
 	<br>
 	<div style = "margin:auto; text-align:center;">
-    		<h1 style = "text-transform:capitalize;">{{.TimeOfDay}}, {{.Username}}</h1>
+    		<h1 style = "text-transform:capitalize;"><p id="good_message"></p> {{.Username}}</h1>
 	<div>
 
 	<div>
 
 		<ul>
-			{{ range .Events }}
+			{{ range .Stickies }}
 				<div class="card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
-					<div class="card-header">When : {{ .When }}</div>
+					<div class="card-header">Title : {{ .Title }}</div>
 					<div class="card-body">
 						<p class="card-text">Description : {{ .Description }}</p>
-						<p class="card-text">ID : {{ .ID }}</p>
+						<button id="{{.ID}}" onclick="postDelete(this.id)" class="btn btn-danger">Delete</button>
 					</div>
 				</div>
 
@@ -28,9 +28,14 @@
 		</ul>
 
 		<br><br>
-                <a href="/addEvent" class="btn btn-primary">Add Event</a>
+                <a href="/addSticky" class="btn btn-primary">Add</a>
                 <br><br>
 	</div>
+
+	<script type="text/javascript" src="/static/js/crypto-js.min.js"></script>
+	<script type="text/javascript" src="/static/js/time.js"></script>
+	<script type="text/javascript" src="/static/js/sticky.js"></script>
+	<script type="text/javascript" src="/static/js/crypto.js"></script>
 
 
 </body>

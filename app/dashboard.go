@@ -9,7 +9,7 @@ type Dash struct {
 	ID		int
 	Username 	string
 	TimeOfDay	string
-	Events		[]Event
+	Stickies	[]Sticky
 }
 
 func GetTimeOfDay() (string) {

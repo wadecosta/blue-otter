@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"encoding/json"
 	"golang.org/x/crypto/bcrypt"
 	"unicode"
 	"context"
@@ -39,6 +40,9 @@ func main() {
 
 	router.HandleFunc("/", HomeHandler).Methods("GET")
 
+	/* Server serving Handlers */
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
 	/* Login Handlers */
 	router.HandleFunc("/login", LoginHandler).Methods("GET")
 	router.HandleFunc("/login", LoginSubmitHandler).Methods("POST")
@@ -54,9 +58,10 @@ func main() {
 	/* User Dashboard */
 	router.HandleFunc("/dashboard", DashboardHandler).Methods("GET")
 	
-	/* User Event Handlers */
-	router.HandleFunc("/addEvent", AddEventHandler).Methods("GET")
-	router.HandleFunc("/addEvent", AddEventSubmitHandler).Methods("POST")
+	/* User Sticky Handlers */
+	router.HandleFunc("/addSticky", AddStickyHandler).Methods("GET")
+	router.HandleFunc("/addSticky", AddStickySubmitHandler).Methods("POST")
+	router.HandleFunc("/delSticky", DelStickyHandler).Methods("POST")
 
 	router.HandleFunc("/profile", ProfileHandler).Methods("GET")
 	router.HandleFunc("/logout", LogoutHandler).Methods("GET")
@@ -278,19 +283,16 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-func AddEventHandler(w http.ResponseWriter, r *http.Request) {
-	tpl.ExecuteTemplate(w, "addEvent.html", nil)
+func AddStickyHandler(w http.ResponseWriter, r *http.Request) {
+	tpl.ExecuteTemplate(w, "addSticky.html", nil)
 }
 
-func AddEventSubmitHandler(w http.ResponseWriter, r *http.Request) {
+func AddStickySubmitHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-        
+       
+	title := r.FormValue("title")
 	description := r.FormValue("description")
-	when := r.FormValue("when")
 
-	key, salt := deriveKey(r.FormValue("password"))
-
-	fmt.Println(key)
 
 	session, _ := store.Get(r, "session-name")
         userID, ok := session.Values["user_id"].(int)
@@ -299,43 +301,12 @@ func AddEventSubmitHandler(w http.ResponseWriter, r *http.Request) {
                 return
         }
 
-	encryptedDescription, err := encrypt(description, key)
-	if err != nil {
-		http.Error(w, "Failed to encrypt description", http.StatusInternalServerError)
-		fmt.Println(err)
-		return
-	}
-
-	encryptedWhen, err := encrypt(when, key)
-	if err != nil {
-		http.Error(w, "Failed to encrypt when", http.StatusInternalServerError)
-		fmt.Println(err)
-		return
-	}
-
-	fmt.Println(userID, description, when, r.FormValue("password"), encryptedDescription, encryptedWhen)
-
-	decryptedDescription, err := decrypt(encryptedDescription, key)
-	if err != nil {
-		fmt.Println("Decryption error:", err)
-		return
-	}
-
-	decryptedWhen, err := decrypt(encryptedWhen, key)
-        if err != nil {
-                fmt.Println("Decryption error:", err)
-                return
-        }
-
-	fmt.Println("key:", key)
-	fmt.Println("salt:", salt)
-
-	fmt.Println("Decrypted Description", decryptedDescription)
-	fmt.Println("Decrypted When", decryptedWhen)
+	encryptedTitle := title
+	encryptedDescription := description
 
 	// insert user data into database
         var insertStmt *sql.Stmt
-        insertStmt, err = db.Prepare("INSERT INTO events (user_id, event_description, event_when, salt) VALUES (?, ?, ?, ?);")
+        insertStmt, err := db.Prepare("INSERT INTO stickies (user_id, sticky_description, sticky_title, salt, to_delete) VALUES (?, ?, ?, ?, 0);")
         if (err != nil) {
                 fmt.Println("error preparing statement:", err)
                 tpl.ExecuteTemplate(w, "dashboard.html", "There was a problem registering this account")
@@ -343,12 +314,51 @@ func AddEventSubmitHandler(w http.ResponseWriter, r *http.Request) {
         }
 
 	ctx := context.Background()
-	_, err = insertStmt.ExecContext(ctx, userID, encryptedDescription, encryptedWhen, salt)
+	_, err = insertStmt.ExecContext(ctx, userID, encryptedDescription, encryptedTitle, "TODO")
 	if err != nil {
 		fmt.Println(err)
 	}
 
         defer insertStmt.Close()
+
+	//tpl.ExecuteTemplate(w, "dashboard.html", nil)
+	http.Redirect(w, r, "/dashboard", http.StatusFound)
+}
+
+func DelStickyHandler(w http.ResponseWriter, r *http.Request) {
+	var req DeleteRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		fmt.Println(err)
+		return
+	}
+	
+	successMessage := "Delete request received successfully"
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"message": successMessage})
+
+	fmt.Println(req)
+
+	/* set sticky to DELETE in the database*/
+	var delStmt *sql.Stmt
+	delStmt, err = db.Prepare("UPDATE stickies SET to_delete = 1 WHERE id = ?")
+	if (err != nil) {
+		fmt.Println("error preparing statement", err)
+		tpl.ExecuteTemplate(w, "dashboard.html", "There was a problem registering this account")
+		return
+	}
+
+	ctx := context.Background()
+	_, err = delStmt.ExecContext(ctx, req.ButtonID)
+	if (err != nil) {
+		fmt.Println(err)
+	}
+	
+	defer delStmt.Close()
+	
+	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
 
 func DashboardHandler(w http.ResponseWriter, r *http.Request) {
@@ -369,10 +379,7 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	dash.ID = user.ID
 	dash.Username = user.Username
 
-	tod := GetTimeOfDay()
-	dash.TimeOfDay = tod
-	
-	stmt := "SELECT event_description, event_when FROM events WHERE user_id = ?"
+	stmt := "SELECT id, sticky_description, sticky_title FROM stickies WHERE (user_id = ? AND to_delete = 0)"
         rows, err := db.Query(stmt, user.ID)
 	if err != nil {
 		fmt.Println(err)
@@ -380,27 +387,33 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 	
+	//outputID := 0
 	for rows.Next() {
-		var tempEvent Event
-        	var eventData string
-        	var eventWhen string
-        	err = rows.Scan(&eventData, &eventWhen)
+		var tempSticky Sticky
+        	var stickyData string
+        	var stickyTitle string
+		var stickyID int
+        	err = rows.Scan(&stickyID, &stickyData, &stickyTitle)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		fmt.Println("Data:", eventData, "When:", eventWhen)
+		fmt.Println("Data:", stickyData, "Title:", stickyTitle)
 
-		tempEvent.Description = eventData
+		tempSticky.Title = stickyTitle
+		tempSticky.Description = stickyData
+		tempSticky.ID = stickyID
 
-		dash.Events = append(dash.Events, tempEvent)
+		dash.Stickies = append(dash.Stickies, tempSticky)
+		
+		//outputID++
 	}
 
 	if err := rows.Err(); err != nil {
 		fmt.Println(err)
 	}
 
-	fmt.Println(dash.Events)
+	fmt.Println(dash.Stickies)
 
 	tpl.ExecuteTemplate(w, "dashboard.html", dash)
 }
