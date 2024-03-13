@@ -387,7 +387,6 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 	
-	//outputID := 0
 	for rows.Next() {
 		var tempSticky Sticky
         	var stickyData string
@@ -405,8 +404,6 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 		tempSticky.ID = stickyID
 
 		dash.Stickies = append(dash.Stickies, tempSticky)
-		
-		//outputID++
 	}
 
 	if err := rows.Err(); err != nil {
