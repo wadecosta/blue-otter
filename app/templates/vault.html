@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html data-bs-theme="dark">
+<head>
+    <title>Profile - {{.Username}}</title>
+    {{ template "Header" }}
+</head>
+<body>
+	<br><br>
+	<div style = "margin:auto; width:50%; border: 3px solid black; padding:10px; border-radius: 25px;">
+    		<h1 style = "text-transform:capitalize;">Welcome {{.Username}}</h1>
+    		<br><br>
+		
+		<form>
+			<label for="key">Vault Key:</label><br>
+			<input type="text" id="key" name="key">
+		</form>
+
+    		<br><br>
+    		<button onclick="getValue()" type="button" class="btn btn-primary" href="/dashboard">Enter the Vault</button>
+	<div>
+
+
+	<script type="text/javascript" src="/static/js/vault.js"></script>
+
+</body>
+</html>

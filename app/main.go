@@ -47,6 +47,9 @@ func main() {
 	router.HandleFunc("/login", LoginHandler).Methods("GET")
 	router.HandleFunc("/login", LoginSubmitHandler).Methods("POST")
 
+	/* Vault Handler */
+	router.HandleFunc("/vault", VaultHandler).Methods("GET")
+
 	/* User Creation Handlers */
 	router.HandleFunc("/register", RegisterHandler).Methods("GET")
 	router.HandleFunc("/register", RegisterSubmitHandler).Methods("POST")
@@ -95,6 +98,23 @@ func LoginSubmitHandler(w http.ResponseWriter, r *http.Request) {
 	session.Save(r, w)
 
 	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+}
+
+func VaultHandler(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session-name")
+        userID, ok := session.Values["user_id"].(int)
+        if !ok {
+                http.Redirect(w, r, "/login", http.StatusSeeOther)
+                return
+        }
+
+        user, err := getUserByID(userID)
+        if err != nil {
+                http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+                return
+        }
+
+	tpl.ExecuteTemplate(w, "vault.html", user)
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
@@ -304,7 +324,7 @@ func AddStickySubmitHandler(w http.ResponseWriter, r *http.Request) {
 	encryptedTitle := title
 	encryptedDescription := description
 
-	// insert user data into database
+	/* insert user sticky data into database */
         var insertStmt *sql.Stmt
         insertStmt, err := db.Prepare("INSERT INTO stickies (user_id, sticky_description, sticky_title, salt, to_delete) VALUES (?, ?, ?, ?, 0);")
         if (err != nil) {
@@ -321,7 +341,6 @@ func AddStickySubmitHandler(w http.ResponseWriter, r *http.Request) {
 
         defer insertStmt.Close()
 
-	//tpl.ExecuteTemplate(w, "dashboard.html", nil)
 	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
 
