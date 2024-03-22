@@ -73,6 +73,7 @@ func main() {
 
 	fmt.Println("Server is running on :8080")
 	http.ListenAndServe(":8080", nil)
+
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
@@ -115,6 +116,34 @@ func VaultHandler(w http.ResponseWriter, r *http.Request) {
         }
 
 	tpl.ExecuteTemplate(w, "vault.html", user)
+}
+
+func VaultSubmitHandler(w http.ResponseWriter, r *http.Request) {
+	
+	session, _ := store.Get(r, "session-name")
+        userID, ok := session.Values["user_id"].(int)
+        if !ok {
+                http.Redirect(w, r, "/login", http.StatusSeeOther)
+                return
+        }
+
+        user, err := getUserByID(userID)
+        if err != nil {
+                http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+                return
+        }
+
+	AESKey := r.FormValue("key")
+	AESHash := r.FormValue("hash")
+	
+	err = authenticateVault(AESHash, AESKey)
+	if (err != nil) {
+		fmt.Println(err)
+	}
+
+	fmt.Println(err)
+
+	tpl.ExecuteTemplate(w, "vaultSuccess.html", user)
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
@@ -174,19 +203,41 @@ func RegisterSubmitHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// create hash from password
-	var hash []byte
-	hash, err = bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	var passwordHash []byte
+	passwordHash, err = bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if (err != nil) {
 		fmt.Println("bcrypt err:", err)
 		tpl.ExecuteTemplate(w, "register.html", "There was a problem registering this account")
 		return
 	}
-	fmt.Println("hash:", hash)
-	fmt.Println("string(hash):", string(hash))
+	fmt.Println("hash:", passwordHash)
+	fmt.Println("string(passwordHash):", string(passwordHash))
+
+	// Provide AES-256 Key
+	key, err := GenerateAES256Key()
+	if err != nil {
+		fmt.Println("Error generating AES key:", err)
+		return
+	}
+	fmt.Println("Generated AES-256 key:", key)
+
+	/* Hash AES-256 Key into database */
+	var keyHash []byte
+	keyHash, err = bcrypt.GenerateFromPassword([]byte(key), bcrypt.DefaultCost)
+	if (err != nil) {
+		fmt.Println("bcrypt err:", err)
+		tpl.ExecuteTemplate(w, "register.html", "There was a problem registering this account")
+		return
+	}
+	fmt.Println("hash:", keyHash)
+	fmt.Println("string(keyHash):", string(keyHash))
+
+
+
 
 	// insert user data into database
 	var insertStmt *sql.Stmt
-	insertStmt, err = db.Prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?);")
+	insertStmt, err = db.Prepare("INSERT INTO users (username, password, email, AESkey) VALUES (?, ?, ?, ?);")
 	if (err != nil) {
 		fmt.Println("error preparing statement:", err)
 		tpl.ExecuteTemplate(w, "register.html", "There was a problem registering this account")
@@ -196,7 +247,7 @@ func RegisterSubmitHandler(w http.ResponseWriter, r *http.Request) {
 	defer insertStmt.Close()
 
 	var result sql.Result
-	result, err = insertStmt.Exec(username, hash, email)
+	result, err = insertStmt.Exec(username, passwordHash, email, keyHash)
 	
 	if (err != nil) {
     		fmt.Println("error inserting new user:", err)

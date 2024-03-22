@@ -18,10 +18,4 @@ type At struct {
 	Day		int
 	Month		int
 	Year		int
-
-	/* Time */
-	/* TODO add later
-	Timezone	string
-	Hour		int
-	Minute		int */
 }

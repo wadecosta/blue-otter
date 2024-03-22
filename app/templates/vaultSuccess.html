@@ -9,15 +9,15 @@
 	<div style = "margin:auto; width:50%; border: 3px solid black; padding:10px; border-radius: 25px;">
     		<h1 style = "text-transform:capitalize;">Welcome {{.Username}}</h1>
     		<br><br>
+
+		<h2>Key was entered successfully! Click "Continue" to enter the Vault!</h2>
 		
 		<form>
 			<input type="hidden" id="hash" name="hash" value="{{.AESKey}}"> 
-			<label for="key">Vault Key:</label><br>
-			<input type="text" id="key" name="key">
 		</form>
 
     		<br><br>
-    		<button onclick="getValue()" type="button" class="btn btn-primary" href="/">Enter the Vault</button>
+    		<button onclick="getValue()" type="button" class="btn btn-primary" href="/dashboard">Continue</button>
 	<div>
 
 
