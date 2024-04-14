@@ -49,6 +49,7 @@ func main() {
 
 	/* Vault Handler */
 	router.HandleFunc("/vault", VaultHandler).Methods("GET")
+	router.HandleFunc("/vault", VaultSubmitHandler).Methods("POST")
 
 	/* User Creation Handlers */
 	router.HandleFunc("/register", RegisterHandler).Methods("GET")
@@ -90,6 +91,7 @@ func LoginSubmitHandler(w http.ResponseWriter, r *http.Request) {
 
 	user, err := authenticateUser(username, password)
 	if err != nil {
+		fmt.Println(err)
 		tpl.ExecuteTemplate(w, "login.html", "Unable to Login. Please try again.")
         	return
 	}
@@ -132,13 +134,17 @@ func VaultSubmitHandler(w http.ResponseWriter, r *http.Request) {
                 http.Error(w, "Internal Server Error", http.StatusInternalServerError)
                 return
         }
-
+	
 	AESKey := r.FormValue("key")
-	AESHash := r.FormValue("hash")
+	AESHash := user.AESKey
+
+	fmt.Println("AESHash:", AESHash)
+        fmt.Println("AESKey:", AESKey)
 	
 	err = authenticateVault(AESHash, AESKey)
 	if (err != nil) {
 		fmt.Println(err)
+		tpl.ExecuteTemplate(w, "vaultFailure.html", user)
 	}
 
 	fmt.Println(err)
@@ -355,7 +361,19 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddStickyHandler(w http.ResponseWriter, r *http.Request) {
-	tpl.ExecuteTemplate(w, "addSticky.html", nil)
+	session, _ := store.Get(r, "session-name")
+        userID, ok := session.Values["user_id"].(int)
+        if !ok {
+                http.Redirect(w, r, "/login", http.StatusSeeOther)
+                return
+        }
+
+        user, err := getUserByID(userID)
+        if err != nil {
+                http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+                return
+        }
+	tpl.ExecuteTemplate(w, "addSticky.html", user)
 }
 
 func AddStickySubmitHandler(w http.ResponseWriter, r *http.Request) {

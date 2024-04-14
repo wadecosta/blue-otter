@@ -15,7 +15,7 @@ type User struct {
 
 func authenticateUser(username, password string) (*User, error) {
 	var user User
-	err := db.QueryRow("SELECT id, username, password, email FROM users WHERE username = ?", username).Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.AESKey)
+	err := db.QueryRow("SELECT id, username, password, email, AESKey FROM users WHERE username = ?", username).Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.AESKey)
 	if (err != nil) {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func authenticateUser(username, password string) (*User, error) {
 
 func getUserByID(userID int) (*User, error) {
 	var user User
-	err := db.QueryRow("SELECT id, username, email, password, AESKey FROM users WHERE id = ?", userID).Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.AESKey)
+	err := db.QueryRow("SELECT id, username, password, email, AESKey FROM users WHERE id = ?", userID).Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.AESKey)
 	if err != nil {
         	return nil, err
 	}

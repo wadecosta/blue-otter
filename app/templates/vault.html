@@ -10,14 +10,18 @@
     		<h1 style = "text-transform:capitalize;">Welcome {{.Username}}</h1>
     		<br><br>
 		
-		<form>
-			<input type="hidden" id="hash" name="hash" value="{{.AESKey}}"> 
-			<label for="key">Vault Key:</label><br>
-			<input type="text" id="key" name="key">
+		<form action="/vault" method="POST">
+			<div class="form-group">
+				<label for="key">Vault Key:</label><br>
+				<input type="text" id="key" name="key">
+			</div>
+
+			<br><br>
+
+			<button onclick="getValue()" type="submit" class="btn btn-primary" value="vault">Enter the Vault</button>
+			<!-- <button onclick="getValue()" type="button" class="btn btn-primary" value="vault">Enter the Vault</button> -->
 		</form>
 
-    		<br><br>
-    		<button onclick="getValue()" type="button" class="btn btn-primary" href="/">Enter the Vault</button>
 	<div>
 
 

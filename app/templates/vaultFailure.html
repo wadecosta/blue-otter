@@ -10,11 +10,11 @@
     		<h1 style = "text-transform:capitalize;">Welcome {{.Username}}</h1>
     		<br><br>
 
-		<h2>Key was entered successfully! Click "Continue" to enter the Vault!</h2>
+		<h2>Sorry, but the key was NOT correct! Please click "Retry" to try again.</h2>
 		
-		<form action="/dashboard" method="GET">
+		<form action="/vault" method="GET">
 			
-			<button type="submit" class="btn btn-primary" value="dashboard">Continue</button>
+			<button type="submit" class="btn btn-warning" value="vault">Retry</button>
 
 		</form>
 

@@ -1,31 +1,31 @@
 <!DOCTYPE html>
 <html data-bs-theme="dark">
 <head>
-    <title>Register</title>
+    <title>Add a new Event</title>
 </head>
 <body>
 	{{ template "Header" }}
     <h1>Add a new Sticky</h1>
-    <form action="/addSticky" method="post">
+    <form onsubmit="return encrypt()">
 
     	<label for="title">Title:</label>
 	<input type="text" name="title" id="title" required><br>
 
         <label for="description">Description:</label>
         <input type="text" name="description" id="description" required><br>
-        
-	<label for="password">Please Enter Password:</label>
-	<input type="password" name="password" id="password" required><br>
 
-        <input type="submit" value="Create Event" onclick="encrypt.js">
+	<input id="iv" type="text" value="{{.AESKey}}">
+
+	<input type="submit" value="Create Event">
     </form>
 
-    <br><br>
-	{{ if . }}
-    		{{ . }}
-	{{ end }}
+    <input id="encryptedTitle" type="text" value="">
 
-	<script src="js/encrypt.js"></script>
+    <br>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
+	<script type="text/javascript" src="/static/js/encrypt.js"></script>
+
 </body>
 
 </html>
