@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html data-bs-theme="dark">
 <head>
-    <title>Add a new Event</title>
+	<title>Add a new Event</title>
 </head>
 <body>
 	{{ template "Header" }}
-    <h1>Add a new Sticky</h1>
-    <form onsubmit="return encrypt()">
+	<h1>Add a new Sticky</h1>
+	<form onsubmit="return encrypt(event)" action="/addSticky" method="POST">
 
-    	<label for="title">Title:</label>
-	<input type="text" name="title" id="title" required><br>
+		<label for="title">Title:</label>
+		<input type="text" name="title" id="title" required><br>
 
-        <label for="description">Description:</label>
-        <input type="text" name="description" id="description" required><br>
+        	<label for="description">Description:</label>
+        	<input type="text" name="description" id="description" required><br>
 
-	<input id="iv" type="text" value="{{.AESKey}}">
+		<input hidden id="iv" type="text" value="{{.AESKey}}">
 
-	<input type="submit" value="Create Event">
-    </form>
+		<input hidden id="encryptedTitle" type="text">
+    		<input hidden id="encryptedDescription" type="text">	
 
-    <input id="encryptedTitle" type="text" value="">
+		<input type="submit" value="Create Sticky">
+    	</form>
 
-    <br>
+
+
+	<br>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
 	<script type="text/javascript" src="/static/js/encrypt.js"></script>
