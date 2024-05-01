@@ -13,6 +13,11 @@ type Stickies struct {
 	Sticky []Sticky
 }
 
+type AddRequest struct {
+	Title		string `json:"title"`
+	Description	string `json:"description"`
+}
+
 type DeleteRequest struct {
 	ButtonID 	string `json:"button_id"`
 }

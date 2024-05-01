@@ -377,10 +377,20 @@ func AddStickyHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddStickySubmitHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-       
-	title := r.FormValue("encryptedTitle")
-	description := r.FormValue("encryptedDescription")
+	//r.ParseForm()
+	//title := r.FormValue("encryptedTitle")
+	//description := r.FormValue("encryptedDescription")
+	
+	var req AddRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		fmt.Println(err)
+		return
+	}
+
+	title := req.Title
+	description := req.Description
 
 	//TODO
 	fmt.Println(title)
@@ -394,12 +404,9 @@ func AddStickySubmitHandler(w http.ResponseWriter, r *http.Request) {
                 return
         }
 
-	encryptedTitle := title
-	encryptedDescription := description
-
 	/* insert user sticky data into database */
         var insertStmt *sql.Stmt
-        insertStmt, err := db.Prepare("INSERT INTO stickies (user_id, sticky_description, sticky_title, salt, to_delete) VALUES (?, ?, ?, ?, 0);")
+        insertStmt, err = db.Prepare("INSERT INTO stickies (user_id, sticky_description, sticky_title, salt, to_delete) VALUES (?, ?, ?, ?, 0);")
         if (err != nil) {
                 fmt.Println("error preparing statement:", err)
                 tpl.ExecuteTemplate(w, "dashboard.html", "There was a problem registering this account")
@@ -407,7 +414,7 @@ func AddStickySubmitHandler(w http.ResponseWriter, r *http.Request) {
         }
 
 	ctx := context.Background()
-	_, err = insertStmt.ExecContext(ctx, userID, encryptedDescription, encryptedTitle, "TODO")
+	_, err = insertStmt.ExecContext(ctx, userID, description, title, "TODO")
 	if err != nil {
 		fmt.Println(err)
 	}

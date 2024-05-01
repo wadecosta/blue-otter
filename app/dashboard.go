@@ -6,6 +6,6 @@ import (
 type Dash struct {
 	ID		int
 	Username 	string
-	TimeOfDay	string
+	//TimeOfDay	string
 	Stickies	[]Sticky
 }
