@@ -58,8 +58,5 @@ function encrypt() {
 
 	xhr.send(body);
 
-
-	//document.forms[0].submit();
-	
 	return false;
 }

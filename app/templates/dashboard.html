@@ -8,16 +8,17 @@
 	<br>
 	<div style = "margin:auto; text-align:center;">
     		<h1 style = "text-transform:capitalize;"><p id="good_message"></p> {{.Username}}</h1>
+		<input id="iv" type="hidden" value="{{.AESKey}}">
 	<div>
 
 	<div>
 
 		<ul>
 			{{ range .Stickies }}
-				<div class="card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
-					<div class="card-header">Title : {{ .Title }}</div>
+				<div class="sticky card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
+					<div class="card-header" id="T-{{.DashID}}" value="{{.Title}}">{{.Title}}</div>
 					<div class="card-body">
-						<p class="card-text">Description : {{ .Description }}</p>
+						<p class="card-text" id="D-{{.DashID}}" value="{{.Description}}">{{.Description}}</p>
 						<button id="{{.ID}}" onclick="postDelete(this.id)" class="btn btn-danger">Delete</button>
 					</div>
 				</div>
@@ -35,6 +36,8 @@
 	<script type="text/javascript" src="/static/js/crypto-js.min.js"></script>
 	<script type="text/javascript" src="/static/js/time.js"></script>
 	<script type="text/javascript" src="/static/js/sticky.js"></script>
+	<script type="text/javascript" src="/static/js/decrypt.js"></script>
+
 	<!-- <script type="text/javascript" src="/static/js/crypto.js"></script> -->
 
 	<script type="text/javascript" stc="/static/js/crypto-3_1_9-1.js"></script>

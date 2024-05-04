@@ -7,6 +7,7 @@ type Sticky struct {
 	ID		int
 	Title		string
 	Description	string
+	DashID		int
 }
 
 type Stickies struct {

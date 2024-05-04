@@ -1,5 +1,5 @@
 function getEventCount() {
-	return document.getElementsByTagName('p').length;
+	return document.getElementsByClassName('sticky').length;
 }
 
 
@@ -9,8 +9,21 @@ if(sessionStorage.getItem("key") === null) {
 
 } else {
 	let key = sessionStorage.getItem("key");
-	console.log("The key has been passed:" + key);
 
 	let items = getEventCount();
-	console.log("Total Item:" + items);
+
+	let tempIV = document.getElementById("iv").value;
+
+
+	for(let i = 0; i < items; i++) {
+
+		let tempT = document.getElementById('T-'+i).innerText;
+		let tempD = document.getElementById('D-'+i).innerText;
+
+		let tempET = decryptText(tempT, key, tempIV);
+		document.getElementById('T-'+i).innerText = tempET;
+
+		let tempED = decryptText(tempD, key, tempIV);
+		document.getElementById('D-'+i).innerText = tempED;
+	}
 }

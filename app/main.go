@@ -477,6 +477,7 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 
 	dash.ID = user.ID
 	dash.Username = user.Username
+	dash.AESKey = user.AESKey
 
 	stmt := "SELECT id, sticky_description, sticky_title FROM stickies WHERE (user_id = ? AND to_delete = 0)"
         rows, err := db.Query(stmt, user.ID)
@@ -486,6 +487,8 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 	
+	dashboard_num := 0
+
 	for rows.Next() {
 		var tempSticky Sticky
         	var stickyData string
@@ -501,8 +504,10 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 		tempSticky.Title = stickyTitle
 		tempSticky.Description = stickyData
 		tempSticky.ID = stickyID
+		tempSticky.DashID = dashboard_num
 
 		dash.Stickies = append(dash.Stickies, tempSticky)
+		dashboard_num++
 	}
 
 	if err := rows.Err(); err != nil {
