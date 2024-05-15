@@ -67,6 +67,11 @@ func main() {
 	router.HandleFunc("/addSticky", AddStickySubmitHandler).Methods("POST")
 	router.HandleFunc("/delSticky", DelStickyHandler).Methods("POST")
 
+	/* User Card Handlers */
+	router.HandleFunc("/addCard", AddCardHandler).Methods("GET")
+	router.HandleFunc("/addCard", AddCardSubmitHandler).Methods("POST")
+	router.HandleFunc("/delCard", DelCardHandler).Methods("POST")
+
 	router.HandleFunc("/profile", ProfileHandler).Methods("GET")
 	router.HandleFunc("/logout", LogoutHandler).Methods("GET")
 
@@ -406,7 +411,7 @@ func AddStickySubmitHandler(w http.ResponseWriter, r *http.Request) {
 
 	/* insert user sticky data into database */
         var insertStmt *sql.Stmt
-        insertStmt, err = db.Prepare("INSERT INTO stickies (user_id, sticky_description, sticky_title, salt, to_delete) VALUES (?, ?, ?, ?, 0);")
+        insertStmt, err = db.Prepare("INSERT INTO stickies (user_id, sticky_description, sticky_title, to_delete) VALUES (?, ?, ?, 0);")
         if (err != nil) {
                 fmt.Println("error preparing statement:", err)
                 tpl.ExecuteTemplate(w, "dashboard.html", "There was a problem registering this account")
@@ -414,7 +419,7 @@ func AddStickySubmitHandler(w http.ResponseWriter, r *http.Request) {
         }
 
 	ctx := context.Background()
-	_, err = insertStmt.ExecContext(ctx, userID, description, title, "TODO")
+	_, err = insertStmt.ExecContext(ctx, userID, description, title)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -460,6 +465,101 @@ func DelStickyHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
 
+func AddCardHandler(w http.ResponseWriter, r *http.Request) {
+        session, _ := store.Get(r, "session-name")
+        userID, ok := session.Values["user_id"].(int)
+        if !ok {
+                http.Redirect(w, r, "/login", http.StatusSeeOther)
+                return
+        }
+
+        user, err := getUserByID(userID)
+        if err != nil {
+                http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+                return
+        }
+        tpl.ExecuteTemplate(w, "addCard.html", user)
+}
+
+func AddCardSubmitHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("TODO")
+	var req AddCardRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		fmt.Println(err)
+		return
+	}
+
+	card_bank := req.CardBank
+	fmt.Println("Card Bank:", card_bank)
+	card_name := req.CardName
+	balance := req.Balance
+	due_date := req.DueDate
+
+	session, _ := store.Get(r, "session-name")
+        userID, ok := session.Values["user_id"].(int)
+        if !ok {
+                http.Redirect(w, r, "/login", http.StatusSeeOther)
+                return
+        }
+
+	var insertStmt *sql.Stmt
+	insertStmt, err = db.Prepare("INSERT INTO cards (user_id, card_bank, card_name, balance, due_date, to_delete) VALUES (?, ?, ?, ?, ?, 0);")
+	if err != nil {
+		fmt.Println("error preparing statement:", err)
+		tpl.ExecuteTemplate(w, "dashboard.html", "There was a problem adding this card to the database!")
+		return
+	}
+	
+	ctx := context.Background()
+	_, err = insertStmt.ExecContext(ctx, userID, card_bank, card_name, balance, due_date)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer insertStmt.Close()
+
+
+	http.Redirect(w, r, "/dashboard", http.StatusFound)
+}
+
+func DelCardHandler(w http.ResponseWriter, r *http.Request) {
+        var req DeleteRequest
+        err := json.NewDecoder(r.Body).Decode(&req)
+        if err != nil {
+                http.Error(w, err.Error(), http.StatusBadRequest)
+                fmt.Println(err)
+                return
+        }
+
+        successMessage := "Delete request received successfully"
+        w.WriteHeader(http.StatusOK)
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(map[string]string{"message": successMessage})
+
+        fmt.Println(req)
+
+        /* set sticky to DELETE in the database*/
+        var delStmt *sql.Stmt
+        delStmt, err = db.Prepare("UPDATE cards SET to_delete = 1 WHERE id = ?")
+        if (err != nil) {
+                fmt.Println("error preparing statement", err)
+                tpl.ExecuteTemplate(w, "dashboard.html", "There was a problem registering this account")
+                return
+        }
+
+        ctx := context.Background()
+        _, err = delStmt.ExecContext(ctx, req.ButtonID)
+        if (err != nil) {
+                fmt.Println(err)
+        }
+
+        defer delStmt.Close()
+
+        http.Redirect(w, r, "/dashboard", http.StatusFound)
+}
+
 func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	var dash Dash
 	session, _ := store.Get(r, "session-name")
@@ -479,6 +579,7 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	dash.Username = user.Username
 	dash.AESKey = user.AESKey
 
+	/* Load Stickies */
 	stmt := "SELECT id, sticky_description, sticky_title FROM stickies WHERE (user_id = ? AND to_delete = 0)"
         rows, err := db.Query(stmt, user.ID)
 	if err != nil {
@@ -515,6 +616,42 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println(dash.Stickies)
+
+	/* Load Cards */
+	stmt = "SELECT id, card_bank, card_name, balance, due_date FROM cards WHERE (user_id = ? AND to_delete = 0)"
+	rows, err = db.Query(stmt, user.ID)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer rows.Close()
+
+	dashboard_num = 0
+
+	for rows.Next() {
+		var tempCard Card
+		var cardID int
+		var cardBank string
+		var cardName string
+		var Balance string
+		var DueDate string
+		err = rows.Scan(&cardID, &cardBank, &cardName, &Balance, &DueDate)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		tempCard.ID = cardID
+		tempCard.CardBank = cardBank
+		tempCard.CardName = cardName
+		tempCard.Balance = Balance
+		tempCard.DueDate = DueDate
+		tempCard.DashID = dashboard_num
+
+		dash.Cards = append(dash.Cards, tempCard)
+		dashboard_num++
+	}
+
 
 	tpl.ExecuteTemplate(w, "dashboard.html", dash)
 }

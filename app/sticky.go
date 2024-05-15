@@ -10,9 +10,9 @@ type Sticky struct {
 	DashID		int
 }
 
-type Stickies struct {
-	Sticky []Sticky
-}
+//type Stickies struct {
+//	Sticky []Sticky
+//}
 
 type AddRequest struct {
 	Title		string `json:"title"`

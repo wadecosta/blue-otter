@@ -1,6 +1,6 @@
-function postDeleteSticky(button_id) {
+function postDeleteCard(button_id) {
                         
-	(fetch('/delSticky' , {
+	(fetch('/delCard' , {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'

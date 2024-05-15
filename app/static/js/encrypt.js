@@ -18,7 +18,7 @@ function encryptText(title_plaintext, key_value, iv_value) {
 	return encrypted.toString();
 }
 
-function encrypt() {
+function encrypt_sticky() {
 	
 	event.preventDefault();
 	
@@ -58,5 +58,48 @@ function encrypt() {
 
 	xhr.send(body);
 
+	return false;
+}
+
+function encrypt_card() {
+	
+	event.preventDefault();
+
+	/* General Encryption Values */
+	let key_value = sessionStorage.getItem("key");
+        let iv_value = document.getElementById('iv').value;
+
+	/* Card Bank Encryption */
+	let card_bank_plaintext = document.getElementById('card_bank').value;
+	let encrypted_card_bank = encryptText(card_bank_plaintext, key_value, iv_value);
+	//document.getElementById('encryptedCardBank').value = encrypted_card_bank.toString();
+
+	/* Card Name Encryption */
+	let card_name_plaintext = document.getElementById('card_name').value;
+        let encrypted_card_name = encryptText(card_name_plaintext, key_value, iv_value);
+        //document.getElementById('encryptedCardName').value = encrypted_card_name.toString();
+
+	/* Balance Encryption */
+	let balance_plaintext = document.getElementById('balance').value;
+        let encrypted_balance = encryptText(balance_plaintext, key_value, iv_value);
+        //document.getElementById('encryptedBalance').value = encrypted_balance.toString();
+
+	/* Due Date Encryption */
+	let due_date_plaintext = document.getElementById('due_date').value;
+        let encrypted_due_date= encryptText(due_date_plaintext, key_value, iv_value);
+        //document.getElementById('encryptedDueDate').value = encrypted_due_date.toString();
+	
+	const xhr = new XMLHttpRequest();
+	xhr.open("POST", window.location.href);
+	xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
+
+	const body = JSON.stringify({
+		card_bank: encrypted_card_bank.toString(),
+		card_name: encrypted_card_name.toString(),
+		balance: encrypted_balance.toString(),
+		due_date: encrypted_due_date.toString()
+	});
+
+	xhr.send(body);
 	return false;
 }

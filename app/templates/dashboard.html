@@ -2,24 +2,30 @@
 <html data-bs-theme="dark">
 <head>
     <title>Dashboard - {{.Username}}</title>
-    {{ template "Header" . }}
+    <!-- {{ template "Header" . }} -->
+	
+
 </head>
 <body>
+	{{ template "Header" . }}
 	<br>
 	<div style = "margin:auto; text-align:center;">
     		<h1 style = "text-transform:capitalize;"><p id="good_message"></p> {{.Username}}</h1>
 		<input id="iv" type="hidden" value="{{.AESKey}}">
 	<div>
 
-	<div>
+	<div class="d-flex container">
+	<div class="flex-grow-1 flex-wrap">
 
 		<ul>
+			<h2>List of Stickies</h2>
 			{{ range .Stickies }}
 				<div class="sticky card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
 					<div class="card-header" id="T-{{.DashID}}" value="{{.Title}}">{{.Title}}</div>
 					<div class="card-body">
 						<p class="card-text" id="D-{{.DashID}}" value="{{.Description}}">{{.Description}}</p>
-						<button id="{{.ID}}" onclick="postDelete(this.id)" class="btn btn-danger">Delete</button>
+						<button class="btn btn-warning">Edit</button>
+						<button id="{{.ID}}" onclick="postDeleteSticky(this.id)" class="btn btn-danger">Delete</button>
 					</div>
 				</div>
 
@@ -29,18 +35,46 @@
 		</ul>
 
 		<br><br>
-                <a href="/addSticky" class="btn btn-primary">Add</a>
+                <a href="/addSticky" class="btn btn-primary">Add Sticky</a>
                 <br><br>
 	</div>
 
+	<div class="flex-grow-1 flex-wrap">
+		<ul>
+			<h2>List of Cards</h2>
+			{{ range .Cards }}
+				<div class="my_card card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
+					<div class="card-header">
+						<p id="Card-CardBank-{{.DashID}}">{{.CardBank}}</p>
+						<p id="Card-CardName-{{.DashID}}">{{.CardName}}</p>
+					</div>
+					
+					<div class="card-body">
+						<p class="card-text" id="Card-Balance-{{.DashID}}">{{.Balance}}</p>
+						<p class="card-text" id="Card-DueDate-{{.DashID}}">{{.DueDate}}</p>
+						<button class="btn btn-warning">Edit</button>
+						<button id="{{.ID}}" onclick="postDeleteCard(this.id)" class="btn btn-danger">Delete</button>
+					</div>
+				</div>
+			{{ end }}
+		</ul>
+
+		<br><br>
+		<a href="/addCard" class="btn btn-primary">Add Card</a>
+
+	</div>
+	</div>
+
+	<script type="text/javascript" src="/static/js/edit.js"></script>
 	<script type="text/javascript" src="/static/js/crypto-js.min.js"></script>
 	<script type="text/javascript" src="/static/js/time.js"></script>
+	<script type="text/javascript" src="/static/js/card.js"></script>
 	<script type="text/javascript" src="/static/js/sticky.js"></script>
 	<script type="text/javascript" src="/static/js/decrypt.js"></script>
 
 	<!-- <script type="text/javascript" src="/static/js/crypto.js"></script> -->
 
-	<script type="text/javascript" stc="/static/js/crypto-3_1_9-1.js"></script>
+	<script type="text/javascript" src="/static/js/crypto-3_1_9-1.js"></script>
 	<!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script> -->
 	<script type="text/javascript" src="/static/js/dashboard.js"></script>
 

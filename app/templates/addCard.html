@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html data-bs-theme="dark">
+<head>
+	<title>Add a new Event</title>
+</head>
+<body>
+	<noscript>YOU NEED JAVASCRIPT!</noscript>
+	{{ template "Header" }}
+	<h1>Add a new Card</h1>
+	<form onsubmit="encrypt_card()">
+
+		<label for="card_bank">Card Bank:</label>
+		<input type="text" name="card_bank" id="card_bank" required><br>
+
+        	<label for="card_name">Card Name:</label>
+        	<input type="text" name="card_name" id="card_name" required><br>
+
+		<label for="balance">Balance:</label>
+                <input type="text" name="balance" id="balance" required><br>
+
+		<label for="due_date">Due Date:</label>
+                <input type="text" name="due_date" id="due_date" required><br>
+
+		<input hidden id="iv" type="text" value="{{.AESKey}}">
+
+		<input type="submit" value="Create Card">
+    	</form>
+
+
+
+	<br>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
+	<script type="text/javascript" src="/static/js/encrypt.js"></script>
+
+</body>
+
+</html>

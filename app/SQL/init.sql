@@ -1,7 +1,8 @@
 USE yourdbname;
 
 DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS stickies; 
+DROP TABLE IF EXISTS stickies;
+DROP TABLE IF EXISTS cards;
 
 
 
@@ -19,6 +20,15 @@ CREATE TABLE stickies (
 	user_id INT NOT NULL,
 	sticky_description VARCHAR(5000) NOT NULL,
 	sticky_title VARCHAR(5000) NOT NULL,
-	salt VARCHAR(5000) NOT NULL,
+	to_delete BOOLEAN NOT NULL
+);
+
+CREATE TABLE cards (
+	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+        user_id INT NOT NULL,
+	card_bank VARCHAR(2000) NOT NULL,
+	card_name VARCHAR(2000) NOT NULL,
+	balance VARCHAR(2000) NOT NULL,
+	due_date VARCHAR(2000) NOT NULL,
 	to_delete BOOLEAN NOT NULL
 );
