@@ -10,6 +10,14 @@ type Sticky struct {
 	DashID		int
 }
 
+type ModSticky struct {
+	ID		int
+	UserID		int
+	Description	string
+	Title		string
+	AESKey		string
+}
+
 //type Stickies struct {
 //	Sticky []Sticky
 //}
@@ -17,6 +25,14 @@ type Sticky struct {
 type AddRequest struct {
 	Title		string `json:"title"`
 	Description	string `json:"description"`
+}
+
+type ModStickyRequest struct {
+	ID		string `json:"id"`
+	Old_Description string `json:"old_sticky_description"`
+	Old_Title	string `json:"old_sticky_title"`
+	New_Description string `json:"new_sticky_description"`
+	New_Title	string `json:"new_sticky_title"`
 }
 
 type DeleteRequest struct {

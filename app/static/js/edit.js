@@ -1,38 +1,79 @@
-    document.addEventListener("DOMContentLoaded", function() {
-        // Select all paragraph elements with IDs starting with "Card-CardBank-"
-        var paragraphs = document.querySelectorAll("p[id^='Card-CardBank-']");
+document.addEventListener('DOMContentLoaded', (event) => {
+	let modal = document.getElementById("myModal");
+	let span = document.querySelector(".close");
+	let title = document.getElementById("title");
+	   
+	/* Needed for encryption/decryption */
+	let key = sessionStorage.getItem("key");
+	let iv = document.getElementById("iv").value;
 
-        // Iterate over each paragraph element
-        paragraphs.forEach(function(paragraph) {
-            // Add click event listener to each paragraph
-            paragraph.addEventListener("click", function() {
-                // Create a new textbox element
-                var textbox = document.createElement("input");
-                textbox.type = "text";
-                // Set the value of the textbox to the current text content of the paragraph
-                textbox.value = paragraph.textContent;
-                // Set the ID of the textbox
-                textbox.id = "Textbox-CardBank-" + paragraph.id.split("-")[3];
-                // Replace the paragraph element with the textbox
-                paragraph.parentNode.replaceChild(textbox, paragraph);
+	let id;
+	let encryptedDescription;
+	let encryptedTitle;
 
-                // Add blur event listener to the textbox
-                textbox.addEventListener("blur", function() {
-                    // Create a new paragraph element
-                    var newParagraph = document.createElement("p");
-                    // Set the text content of the new paragraph to the value of the textbox
-                    newParagraph.textContent = textbox.value;
-                    // Set the ID of the new paragraph
-                    newParagraph.id = paragraph.id;
-                    // Replace the textbox with the new paragraph
-                    textbox.parentNode.replaceChild(newParagraph, textbox);
-                });
 
-                // Add click event listener to the textbox
-                textbox.addEventListener("click", function(event) {
-                    // Prevent event from propagating to the parent elements
-                    event.stopPropagation();
-                });
-            });
-        });
-    });
+	document.querySelectorAll('.open-button').forEach(button => {
+		button.onclick = function() {
+			id = this.getAttribute("data-id");
+			console.log(id);
+
+			encryptedTitle = this.getAttribute("data-title");
+			decryptedTitle = decryptText(encryptedTitle, key, iv);
+			title.value = decryptedTitle;
+
+			encryptedDescription = this.getAttribute("data-description");
+			let decryptedDescription = decryptText(encryptedDescription, key, iv);
+			description.value = decryptedDescription;
+
+			modal.showModal();
+		}
+	});
+
+	span.onclick = function() {
+		modal.close();
+	}
+
+	modal.addEventListener('click', function(event) {
+		if (event.target === modal) {
+			modal.close();
+		}
+	});
+
+	let form = modal.querySelector("form");
+	form.addEventListener("submit", function(event) {
+		event.preventDefault();
+		console.log("GOT YOU");
+
+		let changedTitle = title.value;
+		let changedDescription = description.value;
+
+		console.log(changedTitle);
+		console.log(changedDescription);
+
+		/* TODO check to see if the new messages are different */
+
+		let changedEncryptedTitle = encryptText(changedTitle, key, iv);
+		let changedEncryptedDescription = encryptText(changedDescription, key, iv);
+
+		console.log(changedEncryptedTitle);
+		console.log(changedEncryptedDescription);
+		console.log(id);
+
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", "/editSticky");
+		xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
+
+		const body = JSON.stringify({
+			id: id.toString(),
+			old_sticky_description: encryptedDescription,
+			old_sticky_title: encryptedTitle.toString(),
+			new_sticky_description: changedEncryptedDescription.toString(),
+			new_sticky_title: changedEncryptedTitle.toString()
+		});
+
+		xhr.send(body);
+		window.location.reload();
+
+		modal.close();
+	});
+});

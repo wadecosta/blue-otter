@@ -65,6 +65,7 @@ func main() {
 	/* User Sticky Handlers */
 	router.HandleFunc("/addSticky", AddStickyHandler).Methods("GET")
 	router.HandleFunc("/addSticky", AddStickySubmitHandler).Methods("POST")
+	router.HandleFunc("/editSticky", EditStickySubmitHandler).Methods("POST")
 	router.HandleFunc("/delSticky", DelStickyHandler).Methods("POST")
 
 	/* User Card Handlers */
@@ -429,6 +430,62 @@ func AddStickySubmitHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
 
+func EditStickySubmitHandler(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session-name")
+	userID, ok := session.Values["user_id"].(int)
+	if !ok {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	var req ModStickyRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		fmt.Println("error decoding request body:", err)
+		return
+    	}
+
+	id := req.ID
+	oldDescription := req.Old_Description
+	oldTitle := req.Old_Title
+	newDescription := req.New_Description
+	newTitle := req.New_Title
+
+	fmt.Println("Request data:", id, oldDescription, oldTitle, newDescription, newTitle)
+
+	updateStmt, err := db.Prepare("UPDATE stickies SET sticky_description = ?, sticky_title = ? WHERE id = ? AND user_id = ? AND sticky_description = ? AND sticky_title = ?")
+	if err != nil {
+		fmt.Println("error preparing statement:", err)
+		tpl.ExecuteTemplate(w, "dashboard.html", "There was a problem updating this sticky")
+		return
+	}
+	defer updateStmt.Close()
+
+	ctx := context.Background()
+	res, err := updateStmt.ExecContext(ctx, newDescription, newTitle, id, userID, oldDescription, oldTitle)
+	if err != nil {
+		fmt.Println("error executing statement:", err)
+		tpl.ExecuteTemplate(w, "dashboard.html", "There was a problem updating this sticky")
+		return
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		fmt.Println("error fetching rows affected:", err)
+		tpl.ExecuteTemplate(w, "dashboard.html", "There was a problem updating this sticky")
+		return
+	}
+	if rowsAffected == 0 {
+		fmt.Println("no rows updated")
+		tpl.ExecuteTemplate(w, "dashboard.html", "No sticky was updated. Please check the provided details.")
+		return
+	}
+
+	http.Redirect(w, r, "/dashboard", http.StatusFound)
+}
+
+
 func DelStickyHandler(w http.ResponseWriter, r *http.Request) {
 	var req DeleteRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -450,7 +507,7 @@ func DelStickyHandler(w http.ResponseWriter, r *http.Request) {
 	delStmt, err = db.Prepare("UPDATE stickies SET to_delete = 1 WHERE id = ?")
 	if (err != nil) {
 		fmt.Println("error preparing statement", err)
-		tpl.ExecuteTemplate(w, "dashboard.html", "There was a problem registering this account")
+		tpl.ExecuteTemplate(w, "dashboard.html", "There was a problem deleting this sticky!")
 		return
 	}
 

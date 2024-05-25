@@ -3,7 +3,7 @@
 <head>
     <title>Dashboard - {{.Username}}</title>
     <!-- {{ template "Header" . }} -->
-	
+    <link rel="stylesheet" href="/static/css/modal.css">
 
 </head>
 <body>
@@ -24,8 +24,10 @@
 					<div class="card-header" id="T-{{.DashID}}" value="{{.Title}}">{{.Title}}</div>
 					<div class="card-body">
 						<p class="card-text" id="D-{{.DashID}}" value="{{.Description}}">{{.Description}}</p>
-						<button class="btn btn-warning">Edit</button>
-						<button id="{{.ID}}" onclick="postDeleteSticky(this.id)" class="btn btn-danger">Delete</button>
+						
+						<button class="button btn btn-warning open-button" data-modal-id="M-{{.DashID}}" data-title="{{.Title}}" data-description="{{.Description}}" data-id="{{.ID}}">🖉</button>
+
+						<button id="{{.ID}}" onclick="postDeleteSticky(this.id)" class="btn btn-danger">ⓧ</button>
 					</div>
 				</div>
 
@@ -34,9 +36,8 @@
 			{{ end }}
 		</ul>
 
-		<br><br>
+
                 <a href="/addSticky" class="btn btn-primary">Add Sticky</a>
-                <br><br>
 	</div>
 
 	<div class="flex-grow-1 flex-wrap">
@@ -65,17 +66,27 @@
 	</div>
 	</div>
 
+	<!-- The Modal -->
+    <dialog id="myModal">
+        <form class="form" method="dialog">
+            <span class="close btn btn-danger">Cancel</span>
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title"><br><br>
+            <label for="description">Description:</label>
+            <input type="text" id="description" name="description"><br>
+            <input type="submit" class="btn btn-success"value="Submit">
+        </form>
+    </dialog>
+
 	<script type="text/javascript" src="/static/js/edit.js"></script>
 	<script type="text/javascript" src="/static/js/crypto-js.min.js"></script>
 	<script type="text/javascript" src="/static/js/time.js"></script>
 	<script type="text/javascript" src="/static/js/card.js"></script>
 	<script type="text/javascript" src="/static/js/sticky.js"></script>
+	<script type="text/javascript" src="/static/js/encrypt.js"></script>
 	<script type="text/javascript" src="/static/js/decrypt.js"></script>
 
-	<!-- <script type="text/javascript" src="/static/js/crypto.js"></script> -->
-
 	<script type="text/javascript" src="/static/js/crypto-3_1_9-1.js"></script>
-	<!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script> -->
 	<script type="text/javascript" src="/static/js/dashboard.js"></script>
 
 
