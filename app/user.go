@@ -11,6 +11,7 @@ type User struct {
 	Email    	string
 	AESKey		string
 	isLoggedIn	bool
+	isAdmin		bool
 }
 
 func authenticateUser(username, password string) (*User, error) {
@@ -29,7 +30,7 @@ func authenticateUser(username, password string) (*User, error) {
 
 func getUserByID(userID int) (*User, error) {
 	var user User
-	err := db.QueryRow("SELECT id, username, password, email, AESKey FROM users WHERE id = ?", userID).Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.AESKey)
+	err := db.QueryRow("SELECT id, username, password, email, AESKey, is_admin FROM users WHERE id = ?", userID).Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.AESKey, &user.isAdmin)
 	if err != nil {
         	return nil, err
 	}

@@ -61,6 +61,9 @@ func main() {
 
 	/* User Dashboard */
 	router.HandleFunc("/dashboard", DashboardHandler).Methods("GET")
+
+	/* Admin Dashboard */
+	router.HandleFunc("/admin", AdminHandler).Methods("GET")
 	
 	/* User Sticky Handlers */
 	router.HandleFunc("/addSticky", AddStickyHandler).Methods("GET")
@@ -249,7 +252,7 @@ func RegisterSubmitHandler(w http.ResponseWriter, r *http.Request) {
 
 	// insert user data into database
 	var insertStmt *sql.Stmt
-	insertStmt, err = db.Prepare("INSERT INTO users (username, password, email, AESkey) VALUES (?, ?, ?, ?);")
+	insertStmt, err = db.Prepare("INSERT INTO users (username, password, email, AESkey, is_admin) VALUES (?, ?, ?, ?, 0);")
 	if (err != nil) {
 		fmt.Println("error preparing statement:", err)
 		tpl.ExecuteTemplate(w, "register.html", "There was a problem registering this account")
@@ -548,9 +551,8 @@ func AddCardSubmitHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	card_bank := req.CardBank
-	fmt.Println("Card Bank:", card_bank)
-	card_name := req.CardName
+	card_id := req.CardID
+	fmt.Println("Card Bank:", card_id)
 	balance := req.Balance
 	due_date := req.DueDate
 
@@ -562,7 +564,7 @@ func AddCardSubmitHandler(w http.ResponseWriter, r *http.Request) {
         }
 
 	var insertStmt *sql.Stmt
-	insertStmt, err = db.Prepare("INSERT INTO cards (user_id, card_bank, card_name, balance, due_date, to_delete) VALUES (?, ?, ?, ?, ?, 0);")
+	insertStmt, err = db.Prepare("INSERT INTO cards (user_id, card_id, balance, due_date, to_delete) VALUES (?, ?, ?, ?, 0);")
 	if err != nil {
 		fmt.Println("error preparing statement:", err)
 		tpl.ExecuteTemplate(w, "dashboard.html", "There was a problem adding this card to the database!")
@@ -570,7 +572,7 @@ func AddCardSubmitHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	ctx := context.Background()
-	_, err = insertStmt.ExecContext(ctx, userID, card_bank, card_name, balance, due_date)
+	_, err = insertStmt.ExecContext(ctx, userID, card_id, balance, due_date)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -675,7 +677,7 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(dash.Stickies)
 
 	/* Load Cards */
-	stmt = "SELECT id, card_bank, card_name, balance, due_date FROM cards WHERE (user_id = ? AND to_delete = 0)"
+	stmt = "SELECT id, card_id, balance, due_date FROM cards WHERE (user_id = ? AND to_delete = 0)"
 	rows, err = db.Query(stmt, user.ID)
 	if err != nil {
 		fmt.Println(err)
@@ -687,20 +689,18 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 
 	for rows.Next() {
 		var tempCard Card
+		var ID int
 		var cardID int
-		var cardBank string
-		var cardName string
 		var Balance string
 		var DueDate string
-		err = rows.Scan(&cardID, &cardBank, &cardName, &Balance, &DueDate)
+		err = rows.Scan(&ID, &cardID, &Balance, &DueDate)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 
-		tempCard.ID = cardID
-		tempCard.CardBank = cardBank
-		tempCard.CardName = cardName
+		tempCard.ID = ID
+		tempCard.CardID = cardID
 		tempCard.Balance = Balance
 		tempCard.DueDate = DueDate
 		tempCard.DashID = dashboard_num
@@ -711,4 +711,39 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 
 
 	tpl.ExecuteTemplate(w, "dashboard.html", dash)
+}
+
+func AdminHandler(w http.ResponseWriter, r *http.Request) {
+	var adminDash AdminDash
+	session, _ := store.Get(r, "session-name")
+        userID, ok := session.Values["user_id"].(int)
+        if !ok {
+                http.Redirect(w, r, "/login", http.StatusSeeOther)
+                return
+        }
+
+        user, err := getUserByID(userID)
+        if err != nil {
+                http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+                return
+        }
+
+	/* Check if user is really an Admin */
+	if user.isAdmin != true {
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+		return
+	}
+	adminDash.User = *user
+
+	cards, err := getListCards()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	adminDash.Cards = cards
+	fmt.Println(adminDash.Cards)
+
+
+	
+	tpl.ExecuteTemplate(w, "admin.html", adminDash)
 }

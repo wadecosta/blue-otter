@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	let encryptedDescription;
 	let encryptedTitle;
 
-
 	document.querySelectorAll('.open-button').forEach(button => {
 		button.onclick = function() {
 			id = this.getAttribute("data-id");
@@ -61,7 +60,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 		const xhr = new XMLHttpRequest();
 		xhr.open("POST", "/editSticky");
-		xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
+		xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
 
 		const body = JSON.stringify({
 			id: id.toString(),
@@ -73,7 +72,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 		xhr.send(body);
 		window.location.reload();
-
 		modal.close();
 	});
 });
