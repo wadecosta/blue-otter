@@ -30,7 +30,6 @@ type AddCardRequest struct {
 }
 
 func getListCards() (cards []CardDetails, err error) {
-	//var cards []CardDetails
 
 	stmt := "SELECT * FROM list_cards"
 	rows, err := db.Query(stmt)

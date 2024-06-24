@@ -1,3 +1,5 @@
-# blue-otter
+# Blue Otter
 
-<p>Blue Otter is a WIP secure personal finance GO project.</p>
+![Blue Otter Logo](/app/static/blue-otter-high-resolution-logo-transparent.png)
+
+Blue Otter is a WIP secure personal finance GO project.
