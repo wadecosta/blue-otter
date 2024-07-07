@@ -386,9 +386,6 @@ func AddStickyHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddStickySubmitHandler(w http.ResponseWriter, r *http.Request) {
-	//r.ParseForm()
-	//title := r.FormValue("encryptedTitle")
-	//description := r.FormValue("encryptedDescription")
 	
 	var req AddRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -400,11 +397,6 @@ func AddStickySubmitHandler(w http.ResponseWriter, r *http.Request) {
 
 	title := req.Title
 	description := req.Description
-
-	//TODO
-	fmt.Println(title)
-	fmt.Println(description)
-
 
 	session, _ := store.Get(r, "session-name")
         userID, ok := session.Values["user_id"].(int)
