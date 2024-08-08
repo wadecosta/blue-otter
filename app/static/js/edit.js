@@ -70,8 +70,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			new_sticky_title: changedEncryptedTitle.toString()
 		});
 
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState === XMLHttpRequest.DONE) {
+				if (xhr.status === 200) {
+					window.location.reload();
+				} else {
+					console.error("Failed to saved changes:", xhr.status, xhr.statusText);
+				}
+			}
+		};
+
 		xhr.send(body);
-		window.location.reload();
 		modal.close();
 	});
 });
