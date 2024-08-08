@@ -49,8 +49,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		console.log(changedTitle);
 		console.log(changedDescription);
 
-		/* TODO check to see if the new messages are different */
-
 		let changedEncryptedTitle = encryptText(changedTitle, key, iv);
 		let changedEncryptedDescription = encryptText(changedDescription, key, iv);
 
