@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', (event) => {
-	let modal = document.getElementById("myModal");
-	let span = document.querySelector(".close");
+	let modal = document.getElementById("editStickyModal");
+	let span = document.querySelector(".closeEditSticky");
 	let title = document.getElementById("title");
 	   
 	/* Needed for encryption/decryption */
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	let encryptedDescription;
 	let encryptedTitle;
 
-	document.querySelectorAll('.open-button').forEach(button => {
+	document.querySelectorAll('.open-edit-sticky-button').forEach(button => {
 		button.onclick = function() {
 			id = this.getAttribute("data-id");
 			console.log(id);
