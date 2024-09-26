@@ -5,4 +5,4 @@
 ---
 
 Blue Otter is a WIP secure personal finance project written in GO, JavaScript, and HTML.
-Created by [Wade](wad0.com).
+Created by [Wade](http://www.wad0.com).
