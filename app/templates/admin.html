@@ -3,14 +3,16 @@
 	<head>
 		<title>Profile - {{.User.Username}}</title>
 		{{ template "Header" }}
+
 	</head>
 	<body>
 		<br><br>
 		<div style = "margin:auto; width:50%; border: 3px solid black; padding:10px; border-radius: 25px;">
     			<h1 style = "text-transform:capitalize;">Welcome Admin : {{.User.Username}}</h1>
     			<br><br>
-    			<a type="button" class="btn btn-danger" href="/logout">Logout</a>
-		<div>
+
+			<button class="button btn btn-primary open-add-bank-button">Add Bank Info</button>
+		</div>
 
 		<div class="d-flex container">
 			<div class="flex-grow-1 flex-wrap">
@@ -28,9 +30,34 @@
 
 				<div class="card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
 					<button class="button btn btn-warning open-button" data-modal-id="M-{{.DashID}}" data-title="{{.Title}}" data-description="{{.Description}}" data-id="{{.ID}}">🖉</button>
+				</div>
 			</div>
+
+			<button class="button btn btn-primary open-add-bank-button">Add Bank Info</button>
+
 		</div>
 
-		<script type="text/javascript" src="/static/js/search.js"></script>
+		<button class="button btn btn-primary open-add-bank-button">Add Bank Info</button>
+
+		<!-- Add Bank Modal -->
+		<dialog id="addBankModal">
+			<form class="form" method="dialog">
+				<span class="closeBank btn btn-danger">Cancel</span>
+				<label for="bankName">Bank name:</label>
+				<input type="text" id="bankName" name="bankName"><br><br>
+				<label for="bankLogo">Upload Bank Logo:</label>
+				<input type="file" id="bankLogo" name="bankLogo"><br><br>
+				<input type="submit" class="btn btn-success" value="Submit">
+			</form>
+		</dialog>
+
+
+		<script type="text/javascript" src="/static/js/addBankModal.js?v=1.0"></script>
+
+		<script>
+    			console.log('JS is working!');
+		</script>
+
+
 	</body>
 </html>
