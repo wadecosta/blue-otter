@@ -8,13 +8,35 @@
 	<br><br>
 	<div style = "margin:auto; width:50%; border: 3px solid black; padding:10px; border-radius: 25px;">
     		<h1 style = "text-transform:capitalize;">Welcome {{.Username}}</h1>
-    		<p>Username: {{.Username}}</p>
-    		<p>Email: {{.Email}}</p>
+    		<p id="{{.Username}}">Username: {{.Username}}</p>
+    		<p id="{{.Email}}">Email: {{.Email}}</p>
+		
+		<br><br>
+		<a id="editProfileButton" type="button" class="btn btn-secondary">Edit Profile Info</a>
+
     		<br><br>
     		<a type="button" class="btn btn-warning" href="/updatePassword">Update Password</a>
     		<br><br>
     		<a type="button" class="btn btn-danger" href="/logout">Logout</a>
-	<div>
+	</div>
+
+
+	<!-- Edit Profile Modal -->
+	<dialog id="editProfileModal">
+		<form class="form" method="dialog">
+			<span class="closeEditProfile btn btn-danger">Cancel</span>
+			<br><br>
+			<label for="username">Username:</label>
+			<input type="text" id="username" name="username">
+			<br><br>
+			<label for="email">Email:</label>
+			<input type="text" id="email" name="email">
+			<br><br>
+			<input type="submit" class="btn btn-success" value="Submit">
+		</form>
+	</dialog>
+
+	<script type="text/javascript" src="/static/js/editProfileModal.js"></script>
 
 </body>
 </html>
