@@ -15,6 +15,7 @@ function postDeleteSticky(button_id) {
 		})
 		.then(data => {
 			console.log(data);
+			location.reload(true);
 		})
 		.catch(error => {
 			console.error('There was a problem with the fetch operation:', error);
