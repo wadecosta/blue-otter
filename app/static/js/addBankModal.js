@@ -26,4 +26,20 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			modal.close();
 		}
 	});
+
+	let form = modal.querySelector("form");
+	form.addEventListener("submit", function(event) {
+		event.preventDefault();
+
+		let titleInput = modal.querySelector("#title");
+		let imageInput = modal.querySelector("#bank_image");
+
+		let titleValue = titleInput.value;
+		let imageValue = imageInput.value;
+
+		console.log(titleValue);
+		console.log(imageValue);
+
+		modal.close();
+	});
 });

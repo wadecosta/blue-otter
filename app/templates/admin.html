@@ -14,50 +14,23 @@
 			<button class="button btn btn-primary open-add-bank-button">Add Bank Info</button>
 		</div>
 
-		<div class="d-flex container">
-			<div class="flex-grow-1 flex-wrap">
-				<h2>List of Cards</h2>
-				<div class="card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
-					<input type="text" id="cardInput" onkeyup="listCards()" placeholder="Search for cards..">
-					<ul id="cardUL">
-						{{ range .Cards }}
-							<li><a href="#">{{.CardName}}</a></li>
-						{{ end }}
-					</ul>
-				</div>
-
-				<br>
-
-				<div class="card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
-					<button class="button btn btn-warning open-button" data-modal-id="M-{{.DashID}}" data-title="{{.Title}}" data-description="{{.Description}}" data-id="{{.ID}}">🖉</button>
-				</div>
-			</div>
-
-			<button class="button btn btn-primary open-add-bank-button">Add Bank Info</button>
-
-		</div>
-
-		<button class="button btn btn-primary open-add-bank-button">Add Bank Info</button>
-
 		<!-- Add Bank Modal -->
 		<dialog id="addBankModal">
 			<form class="form" method="dialog">
-				<span class="closeBank btn btn-danger">Cancel</span>
-				<label for="bankName">Bank name:</label>
-				<input type="text" id="bankName" name="bankName"><br><br>
-				<label for="bankLogo">Upload Bank Logo:</label>
-				<input type="file" id="bankLogo" name="bankLogo"><br><br>
+				<span class="closeAddBank btn btn-danger">Cancel</span><br><br>
+				<label for="title">Title:</label>
+				<input type="text" id="title" name="title" required><br><br>
+				<label for="bank_image">Bank Image</label>
+				<input type="file" id="bank_image" name="bank_image" required><br><br>
 				<input type="submit" class="btn btn-success" value="Submit">
 			</form>
 		</dialog>
 
-
 		<script type="text/javascript" src="/static/js/addBankModal.js?v=1.0"></script>
 
-		<script>
-    			console.log('JS is working!');
-		</script>
-
+                <script>
+                        console.log('JS is working!');
+                </script>
 
 	</body>
 </html>
