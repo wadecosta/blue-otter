@@ -1,13 +1,9 @@
-console.log("Ran addBankModal");
-
 document.addEventListener('DOMContentLoaded', (event) => {
 	
 	let modal = document.getElementById("addBankModal");
 	if (!modal) {
 		console.error("Modal element not found");
 	}
-
-	console.log("Found modal");
 
 	let span = document.querySelector(".closeAddBank");
 
@@ -31,15 +27,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	form.addEventListener("submit", function(event) {
 		event.preventDefault();
 
-		let titleInput = modal.querySelector("#title");
-		let imageInput = modal.querySelector("#bank_image");
+		const formData = new FormData(form);
 
-		let titleValue = titleInput.value;
-		let imageValue = imageInput.value;
-
-		console.log(titleValue);
-		console.log(imageValue);
-
-		modal.close();
+		/* Send the form data (including the file */
+		fetch("/addBank", {
+			method: "POST",
+			body: formData,
+		})
+		.then(response => response.json())
+		.then(data => {
+			alert("Upload Successful");
+			modal.close();
+		})
+		.catch(error => {
+			alert("Error uploading file");
+			console.error(error);
+		});
 	});
 });

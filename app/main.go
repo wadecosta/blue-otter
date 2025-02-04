@@ -42,6 +42,7 @@ func main() {
 
 	/* Server serving Handlers */
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	router.PathPrefix("/data/").Handler(http.StripPrefix("/data/", http.FileServer(http.Dir("data"))))
 
 	/* Login Handlers */
 	router.HandleFunc("/login", LoginHandler).Methods("GET")
@@ -64,6 +65,7 @@ func main() {
 
 	/* Admin Dashboard */
 	router.HandleFunc("/admin", AdminHandler).Methods("GET")
+	router.HandleFunc("/addBank", AddBankHandler).Methods("POST")
 	
 	/* User Sticky Handlers */
 	router.HandleFunc("/addSticky", AddStickyHandler).Methods("GET")
@@ -735,6 +737,14 @@ func AdminHandler(w http.ResponseWriter, r *http.Request) {
 	adminDash.Cards = cards
 	fmt.Println(adminDash.Cards)
 
+	/* Get the list of Banks */
+	banks, err := getListBanks()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	adminDash.Banks = banks
+	fmt.Println(adminDash.Banks)
 
 	
 	tpl.ExecuteTemplate(w, "admin.html", adminDash)
