@@ -66,6 +66,7 @@ func main() {
 	/* Admin Dashboard */
 	router.HandleFunc("/admin", AdminHandler).Methods("GET")
 	router.HandleFunc("/addBank", AddBankHandler).Methods("POST")
+	router.HandleFunc("/delBank", DelBankHandler).Methods("POST")
 	
 	/* User Sticky Handlers */
 	router.HandleFunc("/addSticky", AddStickyHandler).Methods("GET")

@@ -36,7 +36,7 @@
 			<div class="row justify-content-around text-white bg-dark mb-3 mx-auto">
 				<div class="col-sm">{{.Name}}</div>
 				<div class="col-sm"><img src="{{.Image}}" style="width:128px;height:128px;"></div>
-				<div class="col-sm"><button id="{{.ID}}" class="btn btn-danger">ⓧ</button></div>
+				<div class="col-sm"><button id="{{.ID}}" onclick="postDeleteBank(this.id)" class="btn btn-danger">ⓧ</button></div>
 			</div>
 
 			{{ end }}
@@ -44,5 +44,6 @@
 		</div>
 
 		<script type="text/javascript" src="/static/js/addBankModal.js?v=1.0"></script>
+		<script type="text/javascript" src="/static/js/bank.js"></script>
 	</body>
 </html>

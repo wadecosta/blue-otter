@@ -7,6 +7,7 @@ import (
 	"context"
 	"net/http"
 	"path/filepath"
+	"encoding/json"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -138,4 +139,40 @@ func AddBankHandler(w http.ResponseWriter, r *http.Request) {
 	/* Respond with a success message */
 	w.Header().Set("Content-Type", "application/json")
 	w.Write([]byte(fmt.Sprintf(`{"message": "File uploaded successfully!", "file_name": "%s"}`, originalFileName)))
+}
+
+func DelBankHandler(w http.ResponseWriter, r *http.Request) {
+	var req DeleteRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+                fmt.Println(err)
+                return
+	}
+
+	successMessage := "Delete request received successfully"
+        w.WriteHeader(http.StatusOK)
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(map[string]string{"message": successMessage})
+
+        fmt.Println(req)
+
+        /* set bank to DELETE in the database*/
+        var delStmt *sql.Stmt
+        delStmt, err = db.Prepare("UPDATE list_banks SET to_delete = 1 WHERE id = ?")
+        if (err != nil) {
+                fmt.Println("error preparing statement", err)
+                tpl.ExecuteTemplate(w, "dashboard.html", "There was a problem registering this account")
+                return
+        }
+
+        ctx := context.Background()
+        _, err = delStmt.ExecContext(ctx, req.ButtonID)
+        if (err != nil) {
+                fmt.Println(err)
+        }
+
+        defer delStmt.Close()
+
+        http.Redirect(w, r, "/admin", http.StatusFound)
 }
