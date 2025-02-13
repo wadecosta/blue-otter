@@ -1,11 +1,7 @@
-USE yourdbname;
+DROP DATABASE IF EXISTS yourdbname; -- TODO remove this line in prod
 
--- Drop tables if they exist
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS stickies;
-DROP TABLE IF EXISTS cards;
-DROP TABLE IF EXISTS list_cards;
-DROP TABLE IF EXISTS list_banks;
+CREATE DATABASE yourdbname;
+USE yourdbname;
 
 -- Create table 'users'
 CREATE TABLE users (
@@ -42,7 +38,8 @@ CREATE TABLE cards (
 CREATE TABLE list_banks (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     bank_name VARCHAR(255) NOT NULL,
-    bank_artwork VARCHAR(255) NOT NULL
+    bank_artwork VARCHAR(255) NOT NULL,
+    to_delete BOOLEAN NOT NULL
 );
 
 -- Create table 'list_cards'

@@ -38,17 +38,21 @@ func getListBanks() (banks []Bank, err error) {
 		var ID		int
 		var Name	string
 		var Image	string
-		err = rows.Scan(&ID, &Name, &Image)
+		var Delete	int
+		err = rows.Scan(&ID, &Name, &Image, &Delete)
 		if err != nil {
 			fmt.Println(err)
 			return nil, err
 		}
 
-		temp.ID = ID
-		temp.Name = Name
-		temp.Image = Image
-
-		banks = append(banks, temp)
+		fmt.Println(Delete)
+		/* Check to see if bank is not deleted */
+		if Delete == 0 {
+			temp.ID = ID
+			temp.Name = Name
+			temp.Image = Image
+			banks = append(banks, temp)
+		}
 	}
 
 	return banks, nil
@@ -117,7 +121,7 @@ func AddBankHandler(w http.ResponseWriter, r *http.Request) {
 
 	/* Insert bank name and image location into the database */
 	var insertStmt *sql.Stmt
-	insertStmt, err = db.Prepare("INSERT INTO list_banks (bank_name, bank_artwork) VALUES (?,?);")
+	insertStmt, err = db.Prepare("INSERT INTO list_banks (bank_name, bank_artwork, to_delete) VALUES (?,?,?);")
 	if err != nil {
 		fmt.Println("error preparing statement:", err)
 		http.Redirect(w, r, "/admin", http.StatusSeeOther)
@@ -125,7 +129,7 @@ func AddBankHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := context.Background()
-	_, err = insertStmt.ExecContext(ctx, bankName, "data/bank_images/" + originalFileName)
+	_, err = insertStmt.ExecContext(ctx, bankName, "data/bank_images/" + originalFileName, 0)
 	if err != nil {
 		fmt.Println(err)
 	}
