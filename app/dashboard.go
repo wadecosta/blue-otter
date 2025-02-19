@@ -9,4 +9,6 @@ type Dash struct {
 	AESKey		string
 	Stickies	[]Sticky
 	Cards		[]Card
+	Banks		[]Bank
+	BankAccounts	[]BankAccount
 }

@@ -67,6 +67,9 @@ func main() {
 	router.HandleFunc("/admin", AdminHandler).Methods("GET")
 	router.HandleFunc("/addBank", AddBankHandler).Methods("POST")
 	router.HandleFunc("/delBank", DelBankHandler).Methods("POST")
+
+	/* User Bank Account Handlers */
+	router.HandleFunc("/addBankAccount", AddBankAccountHandler).Methods("POST")
 	
 	/* User Sticky Handlers */
 	router.HandleFunc("/addSticky", AddStickyHandler).Methods("GET")
@@ -704,6 +707,58 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 		dashboard_num++
 	}
 
+	/* Load Banks */
+        banks, err := GetListBanks()
+        if err != nil {
+                fmt.Println(err)
+                return
+        }
+        dash.Banks = banks
+	
+	dashboard_num = 0
+
+	/* Load Bank Accounts */
+	stmt = "SElECT id, bank_id, amount FROM list_bank_accounts WHERE (user_id = ? AND to_delete = 0)"
+	rows, err = db.Query(stmt, user.ID)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var tempBankAccount BankAccount
+		var ID 		int
+		var BankID 	int
+		var BankName	string
+		var Amount 	string
+		err = rows.Scan(&ID, &BankID, &Amount)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		stmt = "SELECT bank_name FROM list_banks WHERE id = ?"
+		row := db.QueryRow(stmt, BankID);
+		err = row.Scan(&BankName)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				fmt.Println("No rows found")
+			} else {
+				fmt.Println(err)
+			}
+		}
+
+		tempBankAccount.ID = ID
+		tempBankAccount.BankID = BankID
+		tempBankAccount.BankName = BankName
+		tempBankAccount.Amount = Amount
+		tempBankAccount.DashID = dashboard_num
+
+		dash.BankAccounts = append(dash.BankAccounts, tempBankAccount)
+		dashboard_num++
+	}
+
 
 	tpl.ExecuteTemplate(w, "dashboard.html", dash)
 }
@@ -739,7 +794,7 @@ func AdminHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(adminDash.Cards)
 
 	/* Get the list of Banks */
-	banks, err := getListBanks()
+	banks, err := GetListBanks()
 	if err != nil {
 		fmt.Println(err)
 		return

@@ -16,6 +16,21 @@ type Bank struct {
 	ID	int
 	Name	string
 	Image	string
+	Delete	int
+}
+
+type BankAccount struct {
+	ID		int
+	BankID		int
+	BankName	string
+	Amount		string
+	Delete		int
+	DashID		int
+}
+
+type AddBankAccountRequest struct {
+        Bank		string `json:"bank"`
+        Amount		string `json:"amount"`
 }
 
 func checkifExists() {
@@ -25,7 +40,7 @@ func checkifExists() {
 	}
 }
 
-func getListBanks() (banks []Bank, err error) {
+func GetListBanks() (banks []Bank, err error) {
 	stmt := "SELECT * FROM list_banks"
 	rows, err := db.Query(stmt)
 	if err != nil {
@@ -175,4 +190,47 @@ func DelBankHandler(w http.ResponseWriter, r *http.Request) {
         defer delStmt.Close()
 
         http.Redirect(w, r, "/admin", http.StatusFound)
+}
+
+func AddBankAccountHandler(w http.ResponseWriter, r *http.Request) {
+	
+	var req AddBankAccountRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		fmt.Println(err)
+		return
+	}
+
+	bank := req.Bank
+	amount := req.Amount
+
+	fmt.Println("Bank: ", bank)
+	fmt.Println("Amount: ", amount)
+
+	session, _ := store.Get(r, "session-name")
+	userID, ok := session.Values["user_id"].(int)
+	if !ok {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	/* insert user bank account data into database */
+	var insertStmt *sql.Stmt
+	insertStmt, err = db.Prepare("INSERT INTO list_bank_accounts (user_id, bank_id, amount, to_delete) VALUES (?, ?, ?, 0);")
+	if err != nil {
+		fmt.Println("error preparing statement:", err)
+		tpl.ExecuteTemplate(w, "dashboard.html", "There was a problem inserting this account into the database")
+		return
+	}
+
+	ctx := context.Background()
+	_, err = insertStmt.ExecContext(ctx, userID, bank, amount)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer insertStmt.Close()
+
+	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }

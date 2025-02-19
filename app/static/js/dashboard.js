@@ -9,6 +9,8 @@ if(sessionStorage.getItem("key") === null) {
 
 	let tempIV = document.getElementById("iv").value;
 
+	let TotalBankAccountDollar = 0;
+
 
 	for(let i = 0; i < stickiesLength; i++) {
 
@@ -23,6 +25,20 @@ if(sessionStorage.getItem("key") === null) {
 		let tempED = decryptText(tempD, key, tempIV);
 		document.getElementById('D-'+i).innerText = tempED;
 	}
+
+	/* Decrypt Bank Account Amount */
+	let bankAccountLength = document.getElementsByClassName('bank_account').length;
+	for(let i = 0; i < bankAccountLength; i++) {
+		let tempAccount = document.getElementById('A-'+i).innerText;
+		let tempAccountDecrypted = decryptText(tempAccount, key, tempIV);
+		
+		/* Add amount to TotalAmount */
+		TotalBankAccountDollar += parseFloat(tempAccountDecrypted);
+
+		document.getElementById('A-'+i).innerText = "$" + tempAccountDecrypted;
+	}
+
+	document.getElementById("BankAccountTotal").innerText = "$" + TotalBankAccountDollar;
 
 	let cardsLength = document.getElementsByClassName('my_card').length;
 

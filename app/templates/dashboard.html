@@ -15,54 +15,86 @@
 	<div>
 
 	<div class="d-flex container">
-	<div class="flex-grow-1 flex-wrap">
+		<div class="flex-grow-1 flex-wrap">
 
-		<ul>
-			<h2>List of Stickies</h2>
-			{{ range .Stickies }}
-				<div class="sticky card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
-					<div class="card-header" id="T-{{.DashID}}" value="{{.Title}}">{{.Title}}</div>
-					<div class="card-body">
-						<p class="card-text" id="D-{{.DashID}}" value="{{.Description}}">{{.Description}}</p>
+			<ul>
+				<h2>List of Stickies</h2>
+				{{ range .Stickies }}
+					<div class="sticky card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
+						<div class="card-header" id="T-{{.DashID}}" value="{{.Title}}">{{.Title}}</div>
+						<div class="card-body">
+							<p class="card-text" id="D-{{.DashID}}" value="{{.Description}}">{{.Description}}</p>
 						
-						<button class="button btn btn-warning open-edit-sticky-button" data-modal-id="M-{{.DashID}}" data-title="{{.Title}}" data-description="{{.Description}}" data-id="{{.ID}}">🖉</button>
+							<button class="button btn btn-warning open-edit-sticky-button" data-modal-id="M-{{.DashID}}" data-title="{{.Title}}" data-description="{{.Description}}" data-id="{{.ID}}">🖉</button>
 
-						<button id="{{.ID}}" onclick="postDeleteSticky(this.id)" class="btn btn-danger">ⓧ</button>
+							<button id="{{.ID}}" onclick="postDeleteSticky(this.id)" class="btn btn-danger">ⓧ</button>
+						</div>
 					</div>
-				</div>
 
-				<br>
+					<br>
 
-			{{ end }}
-		</ul>
+				{{ end }}
+			</ul>
 
-		<button class="button btn btn-primary open-add-sticky-button">Add Sticky</button>
-	</div>
+			<button class="button btn btn-primary open-add-sticky-button">Add Sticky</button>
+		</div>
 
-	<div class="flex-grow-1 flex-wrap">
-		<ul>
-			<h2>List of Cards</h2>
-			{{ range .Cards }}
-				<div class="my_card card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
-					<div class="card-header">
-						<p id="Card-CardBank-{{.DashID}}">{{.CardBank}}</p>
-						<p id="Card-CardName-{{.DashID}}">{{.CardName}}</p>
-					</div>
+		<div class="flex-grow-1 flex-wrap">
+			<ul>
+				<h2>List of Cards</h2>
+				{{ range .Cards }}
+					<div class="my_card card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
+						<div class="card-header">
+							<p id="Card-CardBank-{{.DashID}}">{{.CardBank}}</p>
+							<p id="Card-CardName-{{.DashID}}">{{.CardName}}</p>
+						</div>
 					
-					<div class="card-body">
-						<p class="card-text" id="Card-Balance-{{.DashID}}">{{.Balance}}</p>
-						<p class="card-text" id="Card-DueDate-{{.DashID}}">{{.DueDate}}</p>
-						<button class="btn btn-warning">Edit</button>
-						<button id="{{.ID}}" onclick="postDeleteCard(this.id)" class="btn btn-danger">Delete</button>
+						<div class="card-body">
+							<p class="card-text" id="Card-Balance-{{.DashID}}">{{.Balance}}</p>
+							<p class="card-text" id="Card-DueDate-{{.DashID}}">{{.DueDate}}</p>
+							<button class="btn btn-warning">Edit</button>
+							<button id="{{.ID}}" onclick="postDeleteCard(this.id)" class="btn btn-danger">Delete</button>
+						</div>
 					</div>
+				{{ end }}
+			</ul>
+
+			<br><br>
+			<a href="/addCard" class="btn btn-primary">Add Card</a>
+		</div>
+	
+		<div class="flex-grow-1 flex-wrap">
+			<ul>
+				<h2>List of Bank Accounts</h2>
+				
+				<div class="card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
+					<p class="card-text" id="BankAccountTotal">Total : $0</p>
 				</div>
-			{{ end }}
-		</ul>
 
-		<br><br>
-		<a href="/addCard" class="btn btn-primary">Add Card</a>
+				{{ range .BankAccounts }}
+					<div class="bank_account card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
+                                                <div class="card-header">
+                                                        <p id="{{.BankName}}">{{.BankName}}</p>
+                                                </div>
 
-	</div>
+                                                <div class="card-body">
+                                                        <p class="card-text" id="A-{{.DashID}}" value="{{.Amount}}">{{.Amount}}</p>
+                                                        <button class="btn btn-warning">Edit</button>
+                                                        <button id="{{.ID}}" onclick="postDeleteCard(this.id)" class="btn btn-danger">Delete</button>
+                                                </div>
+                                        </div>
+
+				{{ end }} 
+				
+
+
+				<!-- Add list of Bank Account Accounts -->
+
+			</ul>
+
+			<br><br>
+			<a class="btn btn-primary open-add-bank-account-button">Add Bank Account</a>
+		</div>
 	</div>
 
 	<!-- The Modal -->
@@ -88,8 +120,26 @@
             <input type="submit" class="btn btn-success"value="Submit">
         </form>
     </dialog>
+
+
+    <!-- Add Bank Account Modal -->
+    <dialog id="addBankAccountModal">
+    	<form class="form" method="dialog">
+		<span class="closeAddBankAccount btn btn-danger">Cancel</span>
+		<label for="bank">Choose a bank:</label>
+		<select id="bank" name="bank">
+			{{ range .Banks }}
+			<option value="{{.ID}}">{{.Name}}</option>
+			{{ end }}
+		</select>
+		<label for="amount">Amount: $</label>
+		<input type="text" id="amount" name="amount" pattern="^\d+(\.\d{1,2})?$" required><br><br>
+		<input type="submit" class="btn btn-success" value="Submit">
+	</form>
+   </dialog>
 	
 
+	<script type="text/javascript" src="/static/js/addBankAccountModal.js"></script>
 	<script type="text/javascript" src="/static/js/addStickyModal.js"></script>
 	<script type="text/javascript" src="/static/js/editStickyModal.js"></script>
 	<script type="text/javascript" src="/static/js/crypto-js.min.js"></script>

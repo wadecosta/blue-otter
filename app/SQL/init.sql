@@ -42,6 +42,17 @@ CREATE TABLE list_banks (
     to_delete BOOLEAN NOT NULL
 );
 
+-- Create table 'list_bank_accounts'
+CREATE TABLE list_bank_accounts (
+	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	user_id INT NOT NULL,
+	bank_id INT NOT NULL,
+	amount VARCHAR(255) NOT NULL,
+	to_delete BOOLEAN NOT NULL,
+	FOREIGN KEY (user_id) REFERENCES users(id),
+	FOREIGN KEY (bank_id) REFERENCES list_banks(id)
+);
+
 -- Create table 'list_cards'
 CREATE TABLE list_cards (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
