@@ -80,7 +80,7 @@
                                                 <div class="card-body">
                                                         <p class="card-text" id="A-{{.DashID}}" value="{{.Amount}}">{{.Amount}}</p>
                                                         <button class="btn btn-warning">Edit</button>
-                                                        <button id="{{.ID}}" onclick="postDeleteCard(this.id)" class="btn btn-danger">Delete</button>
+                                                        <button id="{{.ID}}" onclick="postDeleteBankAccount(this.id)" class="btn btn-danger">Delete</button>
                                                 </div>
                                         </div>
 
@@ -140,6 +140,7 @@
 	
 
 	<script type="text/javascript" src="/static/js/addBankAccountModal.js"></script>
+	<script type="text/javascript" src="/static/js/bankAccount.js"></script>
 	<script type="text/javascript" src="/static/js/addStickyModal.js"></script>
 	<script type="text/javascript" src="/static/js/editStickyModal.js"></script>
 	<script type="text/javascript" src="/static/js/crypto-js.min.js"></script>

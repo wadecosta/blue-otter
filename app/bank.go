@@ -234,3 +234,39 @@ func AddBankAccountHandler(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
+
+func DelBankAccountHandler(w http.ResponseWriter, r *http.Request) {
+	var req DeleteRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		fmt.Println(err)
+		return
+	}
+	
+	successMessage := "Delete request received successfully"
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"message": successMessage})
+
+	fmt.Println(req)
+
+	/* set bank accout to DELETE in the database*/
+	var delStmt *sql.Stmt
+	delStmt, err = db.Prepare("UPDATE list_bank_accounts SET to_delete = 1 WHERE id = ?")
+	if (err != nil) {
+		fmt.Println("error preparing statement", err)
+		tpl.ExecuteTemplate(w, "dashboard.html", "There was a problem deleting this bank account!")
+		return
+	}
+
+	ctx := context.Background()
+	_, err = delStmt.ExecContext(ctx, req.ButtonID)
+	if (err != nil) {
+		fmt.Println(err)
+	}
+	
+	defer delStmt.Close()
+	
+	http.Redirect(w, r, "/dashboard", http.StatusFound)
+}

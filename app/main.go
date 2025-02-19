@@ -70,6 +70,7 @@ func main() {
 
 	/* User Bank Account Handlers */
 	router.HandleFunc("/addBankAccount", AddBankAccountHandler).Methods("POST")
+	router.HandleFunc("/delBankAccount", DelBankAccountHandler).Methods("POST")
 	
 	/* User Sticky Handlers */
 	router.HandleFunc("/addSticky", AddStickyHandler).Methods("GET")
