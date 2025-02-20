@@ -67,7 +67,7 @@
 			<ul>
 				<h2>List of Bank Accounts</h2>
 				
-				<div class="card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
+				<div class="card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:100%; padding:5px;">
 					<p class="card-text" id="BankAccountTotal">Total : $0</p>
 				</div>
 
@@ -79,7 +79,7 @@
 
                                                 <div class="card-body">
                                                         <p class="card-text" id="A-{{.DashID}}" value="{{.Amount}}">{{.Amount}}</p>
-                                                        <button class="btn btn-warning">Edit</button>
+                                                        <button class="button btn btn-warning open-edit-bank-account-button" data-amount="{{.Amount}}" data-id="{{.ID}}">Edit</button>
                                                         <button id="{{.ID}}" onclick="postDeleteBankAccount(this.id)" class="btn btn-danger">Delete</button>
                                                 </div>
                                         </div>
@@ -137,10 +137,22 @@
 		<input type="submit" class="btn btn-success" value="Submit">
 	</form>
    </dialog>
+
+
+   <!-- Edit Bank Account Modal -->
+   <dialog id="editBankAccountModal">
+   	<form class="form" method="dialog">
+		<span class="closeEditBankAccount btn btn-danger">Cancel</span>
+		<label for="bankAccountAmount">Amount:</label>
+		<input type="text" id="bankAccountAmount" name="bankAccountAmount" pattern="^\d+(\.\d{1,2})?$" required><br><br>
+		<input type="submit" class="btn btn-success" value="Submit">
+	</form>
+   </dialog>
 	
 
 	<script type="text/javascript" src="/static/js/addBankAccountModal.js"></script>
 	<script type="text/javascript" src="/static/js/bankAccount.js"></script>
+	<script type="text/javascript" src="/static/js/editBankAccountModal.js"></script>
 	<script type="text/javascript" src="/static/js/addStickyModal.js"></script>
 	<script type="text/javascript" src="/static/js/editStickyModal.js"></script>
 	<script type="text/javascript" src="/static/js/crypto-js.min.js"></script>

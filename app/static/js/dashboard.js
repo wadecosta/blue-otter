@@ -35,7 +35,7 @@ if(sessionStorage.getItem("key") === null) {
 		/* Add amount to TotalAmount */
 		TotalBankAccountDollar += parseFloat(tempAccountDecrypted);
 
-		document.getElementById('A-'+i).innerText = "$" + tempAccountDecrypted;
+		document.getElementById('A-'+i).innerText = tempAccountDecrypted;
 	}
 
 	document.getElementById("BankAccountTotal").innerText = "$" + TotalBankAccountDollar;

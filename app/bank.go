@@ -33,6 +33,12 @@ type AddBankAccountRequest struct {
         Amount		string `json:"amount"`
 }
 
+type ModBankAccountRequest struct {
+	ID			string	`json:"id"`
+	Old_Bank_Account_Amount	string	`json:"old_bank_account_amount"`
+	New_Bank_Account_Amount	string	`json:"new_bank_account_amount"`
+}
+
 func checkifExists() {
 	if err := os.MkdirAll("data/bank_images", 0755); err != nil {
 		fmt.Println("Error creating data/bank_images directory:", err)
@@ -233,6 +239,61 @@ func AddBankAccountHandler(w http.ResponseWriter, r *http.Request) {
 	defer insertStmt.Close()
 
 	http.Redirect(w, r, "/dashboard", http.StatusFound)
+}
+
+func EditBankAccountHandler(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session-name")
+	userID, ok := session.Values["user_id"].(int)
+	if !ok {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	var req ModBankAccountRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		fmt.Println("error decoding request body:", err)
+		return
+	}
+
+	id := req.ID
+	oldAmount := req.Old_Bank_Account_Amount
+	newAmount := req.New_Bank_Account_Amount
+
+	fmt.Println("Requested data:", id, oldAmount, newAmount)
+
+	updateStmt, err := db.Prepare("UPDATE list_bank_accounts SET amount = ? WHERE id = ? AND user_id = ? AND amount = ?")
+	
+	if err != nil {
+		fmt.Println("error preparing statement:", err)
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+		return
+	}
+	defer updateStmt.Close()
+
+	ctx := context.Background()
+	res, err := updateStmt.ExecContext(ctx, newAmount, id, userID, oldAmount)
+	if err != nil {
+		fmt.Println("error executing statement:", err)
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+                return
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		fmt.Println("error fetching rows affected:", err)
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+                return
+	}
+	if rowsAffected == 0 {
+		fmt.Println("no rows updated")
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+                return
+	}
+		
+	http.Redirect(w, r, "/dashboard", http.StatusFound)
+	
 }
 
 func DelBankAccountHandler(w http.ResponseWriter, r *http.Request) {
