@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', (event) => {
-    console.log("Script loaded successfully");
 
     let modal = document.getElementById("addStickyModal");
     if (!modal) {
@@ -11,8 +10,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     let key = sessionStorage.getItem("key");
     let iv = document.getElementById("iv").value;
-
-    console.log("Modal element:", modal);
 
     document.querySelectorAll('.open-add-sticky-button').forEach(button => {
         button.onclick = function() {

@@ -336,8 +336,6 @@ func UpdatePasswordSubmitHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(userID)
-
 	user, err := getUserByID(userID)
     	if err != nil {
         	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -459,8 +457,6 @@ func EditStickySubmitHandler(w http.ResponseWriter, r *http.Request) {
 	newDescription := req.New_Description
 	newTitle := req.New_Title
 
-	fmt.Println("Request data:", id, oldDescription, oldTitle, newDescription, newTitle)
-
 	updateStmt, err := db.Prepare("UPDATE stickies SET sticky_description = ?, sticky_title = ? WHERE id = ? AND user_id = ? AND sticky_description = ? AND sticky_title = ?")
 	if err != nil {
 		fmt.Println("error preparing statement:", err)
@@ -507,8 +503,6 @@ func DelStickyHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": successMessage})
 
-	fmt.Println(req)
-
 	/* set sticky to DELETE in the database*/
 	var delStmt *sql.Stmt
 	delStmt, err = db.Prepare("UPDATE stickies SET to_delete = 1 WHERE id = ?")
@@ -546,7 +540,6 @@ func AddCardHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddCardSubmitHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("TODO")
 	var req AddCardRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
@@ -556,7 +549,6 @@ func AddCardSubmitHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	card_id := req.CardID
-	fmt.Println("Card Bank:", card_id)
 	balance := req.Balance
 	due_date := req.DueDate
 
@@ -601,8 +593,6 @@ func DelCardHandler(w http.ResponseWriter, r *http.Request) {
         w.Header().Set("Content-Type", "application/json")
         json.NewEncoder(w).Encode(map[string]string{"message": successMessage})
 
-        fmt.Println(req)
-
         /* set sticky to DELETE in the database*/
         var delStmt *sql.Stmt
         delStmt, err = db.Prepare("UPDATE cards SET to_delete = 1 WHERE id = ?")
@@ -643,7 +633,6 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	dash.AESKey = user.AESKey
 	dash.Admin = user.isAdmin
 
-	fmt.Println("Admin status", dash.Admin)
 
 	/* Load Stickies */
 	stmt := "SELECT id, sticky_description, sticky_title FROM stickies WHERE (user_id = ? AND to_delete = 0)"
@@ -680,8 +669,6 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	if err := rows.Err(); err != nil {
 		fmt.Println(err)
 	}
-
-	fmt.Println(dash.Stickies)
 
 	/* Load Cards */
 	stmt = "SELECT id, card_id, balance, due_date FROM cards WHERE (user_id = ? AND to_delete = 0)"
@@ -829,7 +816,6 @@ func AdminHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	adminDash.Cards = cards
-	fmt.Println(adminDash.Cards)
 
 	/* Get the list of Banks */
 	banks, err := GetListBanks()
@@ -838,8 +824,6 @@ func AdminHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	adminDash.Banks = banks
-	fmt.Println(adminDash.Banks)
-
 	
 	tpl.ExecuteTemplate(w, "admin.html", adminDash)
 }

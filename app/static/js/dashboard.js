@@ -17,8 +17,6 @@ if(sessionStorage.getItem("key") === null) {
 		let tempT = document.getElementById('T-'+i).innerText;
 		let tempD = document.getElementById('D-'+i).innerText;
 
-		console.log(tempT);
-
 		let tempET = decryptText(tempT, key, tempIV);
 		document.getElementById('T-'+i).innerText = tempET;
 

@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	document.querySelectorAll('.open-edit-sticky-button').forEach(button => {
 		button.onclick = function() {
 			id = this.getAttribute("data-id");
-			console.log(id);
 
 			encryptedTitle = this.getAttribute("data-title");
 			decryptedTitle = decryptText(encryptedTitle, key, iv);
