@@ -38,7 +38,24 @@ if(sessionStorage.getItem("key") === null) {
 		document.getElementById('A-'+i).innerText = tempAccountDecrypted;
 	}
 
-	document.getElementById("BankAccountTotal").innerText = "$" + TotalBankAccountDollar;
+	document.getElementById("BankAccountTotal").innerText = "Total Balance $" + TotalBankAccountDollar;
+
+
+	/* Decrypt CD */
+	let CDLength = document.getElementsByClassName('CD').length;
+	for(let i = 0; i < CDLength; i++) {
+		let tempDeposit = document.getElementById('Deposit-'+i).innerText;
+		let tempDepositDecrypted = decryptText(tempDeposit, key, tempIV);
+		document.getElementById('Deposit-'+i).innerText = tempDepositDecrypted;
+
+		let tempTerm = document.getElementById('Term-'+i).innerText;
+                let tempTermDecrypted = decryptText(tempTerm, key, tempIV);
+                document.getElementById('Term-'+i).innerText = tempTermDecrypted;
+
+		let tempApy = document.getElementById('Apy-'+i).innerText;
+                let tempApyDecrypted = decryptText(tempApy, key, tempIV);
+                document.getElementById('Apy-'+i).innerText = tempApyDecrypted;
+	}
 
 	let cardsLength = document.getElementsByClassName('my_card').length;
 

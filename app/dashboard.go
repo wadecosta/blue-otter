@@ -11,4 +11,5 @@ type Dash struct {
 	Cards		[]Card
 	Banks		[]Bank
 	BankAccounts	[]BankAccount
+	CDs		[]CD
 }

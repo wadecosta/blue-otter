@@ -72,6 +72,10 @@ func main() {
 	router.HandleFunc("/addBankAccount", AddBankAccountHandler).Methods("POST")
 	router.HandleFunc("/editBankAccount", EditBankAccountHandler).Methods("POST")
 	router.HandleFunc("/delBankAccount", DelBankAccountHandler).Methods("POST")
+
+	/* User CD Handlers */
+	router.HandleFunc("/addCD", AddCDHandler).Methods("POST")
+	router.HandleFunc("/delCD", DelCDHandler).Methods("POST")
 	
 	/* User Sticky Handlers */
 	router.HandleFunc("/addSticky", AddStickyHandler).Methods("GET")
@@ -740,16 +744,7 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		stmt = "SELECT bank_name FROM list_banks WHERE id = ?"
-		row := db.QueryRow(stmt, BankID);
-		err = row.Scan(&BankName)
-		if err != nil {
-			if err == sql.ErrNoRows {
-				fmt.Println("No rows found")
-			} else {
-				fmt.Println(err)
-			}
-		}
+		BankName = GetBankName(BankID)
 
 		tempBankAccount.ID = ID
 		tempBankAccount.BankID = BankID
@@ -761,6 +756,44 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 		dashboard_num++
 	}
 
+	dashboard_num = 0
+
+	/* Load CD(s) */
+	stmt = "SELECT id, bank_id, deposit, term, apy FROM CD WHERE (user_id = ? AND to_delete = 0)"
+	rows, err = db.Query(stmt, user.ID)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var tempCD CD
+		var ID		int
+		var BankID	int
+		var BankName	string
+		var Deposit	string
+		var Term	string
+		var Apy		string
+		err = rows.Scan(&ID, &BankID, &Deposit, &Term, &Apy)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		BankName = GetBankName(BankID)
+
+		tempCD.ID = ID
+		tempCD.BankID = BankID
+		tempCD.BankName = BankName
+		tempCD.Deposit = Deposit
+		tempCD.Term = Term
+		tempCD.Apy = Apy
+		tempCD.DashID = dashboard_num
+
+		dash.CDs = append(dash.CDs, tempCD)
+		dashboard_num++
+	}
 
 	tpl.ExecuteTemplate(w, "dashboard.html", dash)
 }

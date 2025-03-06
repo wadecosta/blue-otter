@@ -53,6 +53,20 @@ CREATE TABLE list_bank_accounts (
 	FOREIGN KEY (bank_id) REFERENCES list_banks(id)
 );
 
+-- Create table 'CD'
+CREATE TABLE CD (
+	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	user_id INT NOT NULL,
+	bank_id INT NOT NULL,
+	start_date VARCHAR(255) NOT NULL,
+	deposit VARCHAR(255) NOT NULL,
+	term VARCHAR(255) NOT NULL,
+	apy VARCHAR(255) NOT NULL,
+	to_delete BOOLEAN NOT NULL,
+	FOREIGN KEY (user_id) REFERENCES users(id),
+	FOREIGN KEY (bank_id) REFERENCES list_banks(id)
+);
+
 -- Create table 'list_cards'
 CREATE TABLE list_cards (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,

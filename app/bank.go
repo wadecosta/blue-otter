@@ -46,6 +46,27 @@ func checkifExists() {
 	}
 }
 
+func GetBankName(id int) string {
+	var BankName string
+	
+	stmt := "SELECT bank_name FROM list_banks WHERE id = ?"
+	row := db.QueryRow(stmt, id);
+	err := row.Scan(&BankName)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Println("No rows found")
+			BankName = "ERROR - NO FOUND"
+
+		} else {
+			fmt.Println(err)
+			BankName = "ERROR - INVAILD"
+		}
+	}
+
+	return BankName
+}
+
 func GetListBanks() (banks []Bank, err error) {
 	stmt := "SELECT * FROM list_banks"
 	rows, err := db.Query(stmt)

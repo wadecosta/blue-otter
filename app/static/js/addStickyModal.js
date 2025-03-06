@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			if (xhr.status === 200) {
 				window.location.reload();
 			} else {
-				console.error("Failed to add sticky:", xhr,status, xhr.statusText);
+				console.error("Failed to add sticky:", xhr.status, xhr.statusText);
 			}
 		}
 	};

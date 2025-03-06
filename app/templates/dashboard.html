@@ -2,7 +2,6 @@
 <html data-bs-theme="dark">
 <head>
     <title>Dashboard - {{.Username}}</title>
-    <!-- {{ template "Header" . }} -->
     <link rel="stylesheet" href="/static/css/modal.css">
 
 </head>
@@ -14,18 +13,28 @@
 		<input id="iv" type="hidden" value="{{.AESKey}}">
 	<div>
 
+	<hr class="border-2 w-75 mx-auto" />
+
 	<div class="d-flex container">
 		<div class="flex-grow-1 flex-wrap">
 
 			<ul>
-				<h2>List of Stickies</h2>
+				<br>
+
+				<div class="card-body d-flex align-items-center justify-content-center gap-3">
+					<h2 class="mb-0">Notes</h2>
+					<button class="button btn btn-success open-add-sticky-button mb-0">+</button>
+				</div>
+
+				<br>
+
 				{{ range .Stickies }}
 					<div class="sticky card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
 						<div class="card-header" id="T-{{.DashID}}" value="{{.Title}}">{{.Title}}</div>
 						<div class="card-body">
 							<p class="card-text" id="D-{{.DashID}}" value="{{.Description}}">{{.Description}}</p>
 						
-							<button class="button btn btn-warning open-edit-sticky-button" data-modal-id="M-{{.DashID}}" data-title="{{.Title}}" data-description="{{.Description}}" data-id="{{.ID}}">🖉</button>
+							<button class="button btn btn-warning open-edit-sticky-button mb-0" data-modal-id="M-{{.DashID}}" data-title="{{.Title}}" data-description="{{.Description}}" data-id="{{.ID}}">🖉</button>
 
 							<button id="{{.ID}}" onclick="postDeleteSticky(this.id)" class="btn btn-danger">ⓧ</button>
 						</div>
@@ -36,38 +45,54 @@
 				{{ end }}
 			</ul>
 
-			<button class="button btn btn-primary open-add-sticky-button">Add Sticky</button>
 		</div>
 
+	</div>
+
+	<hr class="border-2 w-75 mx-auto" />
+
+	<div class="d-flex container">
 		<div class="flex-grow-1 flex-wrap">
 			<ul>
-				<h2>List of Cards</h2>
-				{{ range .Cards }}
-					<div class="my_card card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
+				<div class="card-body d-flex align-items-center justify-content-center gap-3">
+                                        <h2 class="mb-0">CDs</h2>
+                                        <button class="btn btn-success open-CD-button">+</button>
+                                </div> 
+
+				<br>
+
+				<div class="card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
+                                        <p class="card-text" id="CDTotal">Total : $0</p>
+                                </div>
+
+				{{ range .CDs }}
+					<div class="CD card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
 						<div class="card-header">
-							<p id="Card-CardBank-{{.DashID}}">{{.CardBank}}</p>
-							<p id="Card-CardName-{{.DashID}}">{{.CardName}}</p>
+							<p class="{{.BankName}}">{{.BankName}}</p>
 						</div>
-					
+
 						<div class="card-body">
-							<p class="card-text" id="Card-Balance-{{.DashID}}">{{.Balance}}</p>
-							<p class="card-text" id="Card-DueDate-{{.DashID}}">{{.DueDate}}</p>
-							<button class="btn btn-warning">Edit</button>
-							<button id="{{.ID}}" onclick="postDeleteCard(this.id)" class="btn btn-danger">Delete</button>
+							<p class="card-text" id="Deposit-{{.DashID}}">{{.Deposit}}</p>
+							<p class="card-text" id="Term-{{.DashID}}">{{.Term}}</p>
+							<p class="card-text" id="Apy-{{.DashID}}">{{.Apy}}</p>
+							<button id="{{.ID}}" onclick="postDeleteCD(this.id)" class="btn btn-danger">X</button>
 						</div>
 					</div>
+
 				{{ end }}
 			</ul>
-
-			<br><br>
-			<a href="/addCard" class="btn btn-primary">Add Card</a>
 		</div>
 	
 		<div class="flex-grow-1 flex-wrap">
 			<ul>
-				<h2>List of Bank Accounts</h2>
+				<div class="card-body d-flex align-items-center justify-content-center gap-3">
+					<h2 class="mb-0">Checking/Saving Accounts</h2>
+					<button class="btn btn-success open-add-bank-account-button">+</button>
+				</div>
+
+				<br>
 				
-				<div class="card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:100%; padding:5px;">
+				<div class="card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
 					<p class="card-text" id="BankAccountTotal">Total : $0</p>
 				</div>
 
@@ -79,21 +104,16 @@
 
                                                 <div class="card-body">
                                                         <p class="card-text" id="A-{{.DashID}}" value="{{.Amount}}">{{.Amount}}</p>
-                                                        <button class="button btn btn-warning open-edit-bank-account-button" data-amount="{{.Amount}}" data-id="{{.ID}}">Edit</button>
+                                                        <button class="button btn btn-warning open-edit-bank-account-button mb-0" data-amount="{{.Amount}}" data-id="{{.ID}}">Edit</button>
                                                         <button id="{{.ID}}" onclick="postDeleteBankAccount(this.id)" class="btn btn-danger">Delete</button>
                                                 </div>
                                         </div>
 
 				{{ end }} 
 				
-
-
-				<!-- Add list of Bank Account Accounts -->
-
 			</ul>
 
 			<br><br>
-			<a class="btn btn-primary open-add-bank-account-button">Add Bank Account</a>
 		</div>
 	</div>
 
@@ -148,6 +168,29 @@
 		<input type="submit" class="btn btn-success" value="Submit">
 	</form>
    </dialog>
+
+   <!-- Add CD Modal -->
+   <dialog id="addCDModal">
+   	<form class="form" method="dialog">
+		<span class="closeAddCD btn btn-danger">Cancel</span>
+		<label for="bank">Choose a bank:</span>
+		<select id="bank" name="bank">
+			{{ range .Banks }}
+			<option value="{{.ID}}">{{.Name}}</option>
+			{{ end }}
+		</select><br><br>
+		<label for="startDate">Begining Date:</label>
+		<input type="date" id="startDate" name="startDate" required><br><br>
+		<label for="deposit">Initial Deposit: $</label>
+		<input type="text" id="deposit" name="deposit" pattern="^\d+(\.\d{1,2})?$" required><br><br>
+		<label for="term">Term Length (months):</label>
+		<input type="text" id="term" name="term" pattern="^\d+(\.\d{0})?$" required><br><br>
+		<label for="apy">APR Rate: %</label>
+		<input type="text" id="apy" name="apy" pattern="^\d+(\.\d{1,2})?$" required><br><br>
+		<input type="submit" class="btn btn-success" value="Submit">
+	</form>
+   </dialog>
+
 	
 
 	<script type="text/javascript" src="/static/js/addBankAccountModal.js"></script>
@@ -155,13 +198,14 @@
 	<script type="text/javascript" src="/static/js/editBankAccountModal.js"></script>
 	<script type="text/javascript" src="/static/js/addStickyModal.js"></script>
 	<script type="text/javascript" src="/static/js/editStickyModal.js"></script>
+	<script type="text/javascript" src="/static/js/addCDModal.js"></script>
 	<script type="text/javascript" src="/static/js/crypto-js.min.js"></script>
 	<script type="text/javascript" src="/static/js/time.js"></script>
 	<script type="text/javascript" src="/static/js/card.js"></script>
+	<script type="text/javascript" src="/static/js/CD.js"></script>
 	<script type="text/javascript" src="/static/js/sticky.js"></script>
 	<script type="text/javascript" src="/static/js/encrypt.js"></script>
 	<script type="text/javascript" src="/static/js/decrypt.js"></script>
-
 	<script type="text/javascript" src="/static/js/crypto-3_1_9-1.js"></script>
 	<script type="text/javascript" src="/static/js/dashboard.js"></script>
 
