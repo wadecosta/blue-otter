@@ -9,16 +9,13 @@
 		<br><br>
 		<div style = "margin:auto; width:50%; border: 3px solid black; padding:10px; border-radius: 25px;">
     			<h1 style = "text-transform:capitalize;">Welcome Admin : {{.User.Username}}</h1>
-    			<br><br>
-
-			<button class="button btn btn-primary open-add-bank-button">Add Bank Info</button>
 		</div>
 
 		<!-- Add Bank Modal -->
 		<dialog id="addBankModal">
 			<form class="form" enctype="multipart/form-data">
 				<span class="closeAddBank btn btn-danger">Cancel</span><br><br>
-				<label for="title">Title:</label>
+				<label for="title">Bank Name:</label>
 				<input type="text" id="title" name="title" required><br><br>
 				<label for="bank_image">Bank Image</label>
 				<input type="file" id="bank_image" name="bank_image" required><br><br>
@@ -28,8 +25,13 @@
 
 		<br><br>
 		<div style = "margin:auto; width:50%; border: 3px solid black; padding:10px; border-radius: 25px;" >
-			<h1 style = "text-transform:capitalize;">Banks</h1>
-			<br>
+			
+			<div class="card-body d-flex align-items-center justify-content-center gap-3">
+                                        <h2 class="mb-0">Banks</h2>
+                                        <button class="btn btn-success open-add-bank-button">+</button>
+                        </div>
+
+			<hr class="hr" />
 
 			{{ range .Banks }}
 

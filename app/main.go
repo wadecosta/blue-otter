@@ -641,6 +641,9 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	dash.ID = user.ID
 	dash.Username = user.Username
 	dash.AESKey = user.AESKey
+	dash.Admin = user.isAdmin
+
+	fmt.Println("Admin status", dash.Admin)
 
 	/* Load Stickies */
 	stmt := "SELECT id, sticky_description, sticky_title FROM stickies WHERE (user_id = ? AND to_delete = 0)"
