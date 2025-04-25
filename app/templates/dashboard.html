@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html data-bs-theme="dark">
-<head>
-    <title>Dashboard - {{.Username}}</title>
-    <!-- <link rel="stylesheet" href="/static/css/modal.css"> -->
-
-</head>
+	<head>
+    		<title>Dashboard - {{.Username}}</title>
+	</head>
 <body>
 	{{ template "Header" . }}
 	<br>
@@ -37,10 +35,6 @@
 						</div>
 						<div class="card-body">
 							<p class="card-text" id="D-{{.DashID}}" value="{{.Description}}">{{.Description}}</p>
-						
-							<!-- <button class="button btn btn-warning open-edit-sticky-button mb-0" data-modal-id="M-{{.DashID}}" data-title="{{.Title}}" data-description="{{.Description}}" data-id="{{.ID}}">🖉</button> -->
-
-							<!-- <button id="{{.ID}}" onclick="postDeleteSticky(this.id)" class="btn btn-danger">ⓧ</button> -->
 						</div>
 					</div>
 
@@ -72,7 +66,7 @@
 				{{ range .CDs }}
 					<div class="CD card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
 						<div class="card-header d-flex align-items-center justify-content-between gap-3">
-							<button class="btn btn-warning mb-0">O</button>
+							<button class="btn btn-warning open-edit-CD-button mb-0" data-bank="{{.BankID}}" data-start-date="{{.StartDate}}" data-deposit="{{.Deposit}}" data-term="{{.Term}}" data-apy="{{.Apy}}" data-id="{{.ID}}">O</button>
 							<p class="{{.BankName}} mb-0">{{.BankName}}</p>
 							<button id="{{.ID}}" onclick="postDeleteCD(this.id)" class="btn btn-danger mb-0">X</button>
 						</div>
@@ -80,8 +74,8 @@
 						<div class="card-body">
 							<p class="card-text" id="Deposit-{{.DashID}}">{{.Deposit}}</p>
 							<p class="card-text" id="Term-{{.DashID}}">{{.Term}}</p>
-							<p class="card-text" id="Apy-{{.DashID}}">{{.Apy}}</p>
-							<!-- <button id="{{.ID}}" onclick="postDeleteCD(this.id)" class="btn btn-danger">X</button> -->
+							<p class="card-text" id="Apy-{{.DashID}}">{{.Apy}}</p> 
+							<p class="card-text" id="FinalAmount-{{.DashID}}"></p>
 						</div>
 					</div>
 
@@ -112,8 +106,6 @@
 
                                                 <div class="card-body">
                                                         <p class="card-text" id="A-{{.DashID}}" value="{{.Amount}}">{{.Amount}}</p>
-                                                        <!-- <button class="button btn btn-warning open-edit-bank-account-button mb-0" data-amount="{{.Amount}}" data-id="{{.ID}}">Edit</button> -->
-                                                        <!-- <button id="{{.ID}}" onclick="postDeleteBankAccount(this.id)" class="btn btn-danger">Delete</button> -->
                                                 </div>
                                         </div>
 
@@ -131,9 +123,6 @@
             <span class="closeEditSticky btn btn-danger">Cancel</span>
             <label for="title">Title:</label>
             <input type="text" id="title" name="title"><br><br>
-            <!-- <label for="description">Description:</label>
-            <input type="text" id="description" name="description"><br> -->
-
 	    <p>Description</p>
             <textarea row="10" cols="40" maxlength="140" name="description" id="description" spellcheck="true" placeholder="Enter the description here"></textarea>
 
@@ -155,7 +144,6 @@
         </form>
     </dialog>
 
-
     <!-- Add Bank Account Modal -->
     <dialog id="addBankAccountModal">
     	<form class="form" method="dialog">
@@ -172,7 +160,6 @@
 	</form>
    </dialog>
 
-
    <!-- Edit Bank Account Modal -->
    <dialog id="editBankAccountModal">
    	<form class="form" method="dialog">
@@ -183,15 +170,15 @@
 	</form>
    </dialog>
 
-   <!-- Add CD Modal -->
+   <!-- CD Modal -->
    <dialog id="addCDModal">
    	<form class="form" method="dialog">
 		<span class="closeAddCD btn btn-danger">Cancel</span>
-		<label for="bank">Choose a bank:</span>
+		<label for="bank">Choose a bank:</label>
 		<select id="bank" name="bank">
 			{{ range .Banks }}
-			<option value="{{.ID}}">{{.Name}}</option>
-			{{ end }}
+                        <option value="{{.ID}}">{{.Name}}</option>
+                        {{ end }}
 		</select><br><br>
 		<label for="startDate">Begining Date:</label>
 		<input type="date" id="startDate" name="startDate" required><br><br>
@@ -205,14 +192,13 @@
 	</form>
    </dialog>
 
-	
-
 	<script type="text/javascript" src="/static/js/addBankAccountModal.js"></script>
 	<script type="text/javascript" src="/static/js/bankAccount.js"></script>
 	<script type="text/javascript" src="/static/js/editBankAccountModal.js"></script>
 	<script type="text/javascript" src="/static/js/addStickyModal.js"></script>
 	<script type="text/javascript" src="/static/js/editStickyModal.js"></script>
 	<script type="text/javascript" src="/static/js/addCDModal.js"></script>
+	<script type="text/javascript" src="/static/js/editCDModal.js"></script>
 	<script type="text/javascript" src="/static/js/crypto-js.min.js"></script>
 	<script type="text/javascript" src="/static/js/time.js"></script>
 	<script type="text/javascript" src="/static/js/card.js"></script>

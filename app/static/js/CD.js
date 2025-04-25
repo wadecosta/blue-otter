@@ -21,3 +21,36 @@ function postDeleteCD(button_id) {
 		})
 	);
 }
+
+function calculateCD(principal, annualRate, months, compoundFrequency) {
+
+	console.log("principal :", principal, " annualRate :", annualRate, " months:", months, " compoundFrequency:", compoundFrequency);
+
+	/* Convert annual interest rate to a decimal */
+	const rate = annualRate / 100;
+
+	console.log("rate :", rate);
+
+	/* Convert months into years */
+	const years = months / 12;
+
+	console.log("years :", years);
+
+	/* Calculate the total number of compounding periods */
+	const periods = compoundFrequency * years;
+
+	console.log("periods :", periods);
+
+	/* Calculate the interest rate per compounding period */
+	const ratePerPeriod = rate / compoundFrequency;
+
+	console.log("ratePerPeriod :", ratePerPeriod);
+	
+	/* Calculate the future value using the compound interest formula */
+	const futureValue = principal * Math.pow(1 + ratePerPeriod, periods);
+
+	console.log("futureValue", futureValue);
+
+	/* Return the future value rounded to 2 decimal places */
+	return futureValue.toFixed(2);
+}

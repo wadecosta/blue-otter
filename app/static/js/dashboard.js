@@ -53,6 +53,12 @@ if(sessionStorage.getItem("key") === null) {
 		let tempApy = document.getElementById('Apy-'+i).innerText;
                 let tempApyDecrypted = decryptText(tempApy, key, tempIV);
                 document.getElementById('Apy-'+i).innerText = tempApyDecrypted;
+
+
+
+		let finalAmount = calculateCD(tempDepositDecrypted, tempApyDecrypted, tempTermDecrypted, 1);
+		console.log(finalAmount);
+		document.getElementById('FinalAmount-'+i).innerText = finalAmount;
 	}
 
 	let cardsLength = document.getElementsByClassName('my_card').length;

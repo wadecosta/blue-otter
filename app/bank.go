@@ -88,7 +88,6 @@ func GetListBanks() (banks []Bank, err error) {
 			return nil, err
 		}
 
-		fmt.Println(Delete)
 		/* Check to see if bank is not deleted */
 		if Delete == 0 {
 			temp.ID = ID

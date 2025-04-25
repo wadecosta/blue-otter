@@ -12,6 +12,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	let iv = document.getElementById("iv").value;
 
 	document.querySelectorAll('.open-CD-button').forEach(button => {
+		const dialog = document.getElementById('addCDModal');
+
+		function clearDialog() {
+			dialog.close(); // Close the dialog
+			dialog.innerHTML = ''; // Clear its content
+		}
+
 		button.onclick = function() {
 			modal.showModal();
 		}

@@ -95,7 +95,6 @@ func main() {
 
 	fmt.Println("Server is running on :8080")
 	http.ListenAndServe(":8080", nil)
-
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
@@ -167,8 +166,6 @@ func VaultSubmitHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		tpl.ExecuteTemplate(w, "vaultFailure.html", user)
 	}
-
-	fmt.Println(err)
 
 	tpl.ExecuteTemplate(w, "vaultSuccess.html", user)
 }
@@ -258,9 +255,6 @@ func RegisterSubmitHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("hash:", keyHash)
 	fmt.Println("string(keyHash):", string(keyHash))
-
-
-
 
 	// insert user data into database
 	var insertStmt *sql.Stmt
@@ -488,7 +482,6 @@ func EditStickySubmitHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
 
-
 func DelStickyHandler(w http.ResponseWriter, r *http.Request) {
 	var req DeleteRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -519,8 +512,6 @@ func DelStickyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	defer delStmt.Close()
-	
-	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
 
 func AddCardHandler(w http.ResponseWriter, r *http.Request) {
@@ -574,7 +565,6 @@ func AddCardSubmitHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	defer insertStmt.Close()
-
 
 	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
@@ -655,7 +645,6 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 			return
 		}
-		fmt.Println("Data:", stickyData, "Title:", stickyTitle)
 
 		tempSticky.Title = stickyTitle
 		tempSticky.Description = stickyData
