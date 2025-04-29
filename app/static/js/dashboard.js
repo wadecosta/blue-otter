@@ -36,7 +36,7 @@ if(sessionStorage.getItem("key") === null) {
 		document.getElementById('A-'+i).innerText = tempAccountDecrypted;
 	}
 
-	document.getElementById("BankAccountTotal").innerText = "Total Balance $" + TotalBankAccountDollar;
+	document.getElementById("BankAccountTotal").innerText = "Total Balance $" + TotalBankAccountDollar.toFixed(2);
 
 
 	/* Decrypt CD */
