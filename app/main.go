@@ -84,8 +84,8 @@ func main() {
 	router.HandleFunc("/delSticky", DelStickyHandler).Methods("POST")
 
 	/* User Card Handlers */
-	router.HandleFunc("/addCard", AddCardHandler).Methods("GET")
-	router.HandleFunc("/addCard", AddCardSubmitHandler).Methods("POST")
+	//router.HandleFunc("/addCard", AddCardHandler).Methods("GET")
+	router.HandleFunc("/addCard", AddCardHandler).Methods("POST")
 	router.HandleFunc("/delCard", DelCardHandler).Methods("POST")
 
 	router.HandleFunc("/profile", ProfileHandler).Methods("GET")
@@ -512,61 +512,6 @@ func DelStickyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	defer delStmt.Close()
-}
-
-func AddCardHandler(w http.ResponseWriter, r *http.Request) {
-        session, _ := store.Get(r, "session-name")
-        userID, ok := session.Values["user_id"].(int)
-        if !ok {
-                http.Redirect(w, r, "/login", http.StatusSeeOther)
-                return
-        }
-
-        user, err := getUserByID(userID)
-        if err != nil {
-                http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-                return
-        }
-        tpl.ExecuteTemplate(w, "addCard.html", user)
-}
-
-func AddCardSubmitHandler(w http.ResponseWriter, r *http.Request) {
-	var req AddCardRequest
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		fmt.Println(err)
-		return
-	}
-
-	card_id := req.CardID
-	balance := req.Balance
-	due_date := req.DueDate
-
-	session, _ := store.Get(r, "session-name")
-        userID, ok := session.Values["user_id"].(int)
-        if !ok {
-                http.Redirect(w, r, "/login", http.StatusSeeOther)
-                return
-        }
-
-	var insertStmt *sql.Stmt
-	insertStmt, err = db.Prepare("INSERT INTO cards (user_id, card_id, balance, due_date, to_delete) VALUES (?, ?, ?, ?, 0);")
-	if err != nil {
-		fmt.Println("error preparing statement:", err)
-		tpl.ExecuteTemplate(w, "dashboard.html", "There was a problem adding this card to the database!")
-		return
-	}
-	
-	ctx := context.Background()
-	_, err = insertStmt.ExecContext(ctx, userID, card_id, balance, due_date)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	defer insertStmt.Close()
-
-	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
 
 func DelCardHandler(w http.ResponseWriter, r *http.Request) {

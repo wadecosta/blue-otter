@@ -73,5 +73,6 @@ CREATE TABLE list_cards (
     bank_id INT NOT NULL,
     card_name VARCHAR(255) NOT NULL,
     card_artwork VARCHAR(255) NOT NULL,
+    to_delete BOOLEAN NOT NULL,
     FOREIGN KEY (bank_id) REFERENCES list_banks(id)
 );
