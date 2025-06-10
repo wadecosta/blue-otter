@@ -4,24 +4,25 @@
 <link rel="stylesheet" href="/static/css/modal.css">
 <link rel="stylesheet" href="/static/css/bootstrap.min.css">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
-  <a class="navbar-brand" href="/">Blue Otter</a>
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-    <div class="navbar-nav">
-      <a class="nav-item nav-link" href="/">Home</a>
-      <a class="nav-item nav-link" href="/profile">Profile</a>
-      <a class="nav-item nav-link" href="/dashboard">Dashboard</a>
-      {{ if eq .Admin true }}<a class="nav-item nav-link" href="/admin">Admin Panel</a>{{end}}
+<nav class="navbar navbar-expand-lg bg-dark-subtle sticky-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/"><img src="/static/logo.webp" class="img-fluid rounded" alt="Logo" width="45" height="45"> Blue Otter</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-link" href="/profile">Profile</a>
+        <a class="nav-link" href="/dashboard">Dashboard</a>
+        {{ if eq .Admin true }}<a class="nav-item nav-link" href="/admin">Admin Panel</a>{{end}}
+      </div>
     </div>
   </div>
 </nav>
 
 <noscript>YOU NEED JAVASCRIPT!</noscript>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
 <script type="text/javascript" src="/static/js/nav.js"></script>
 
 {{ end }}
