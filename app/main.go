@@ -530,7 +530,7 @@ func DelCardHandler(w http.ResponseWriter, r *http.Request) {
 
         /* set sticky to DELETE in the database*/
         var delStmt *sql.Stmt
-        delStmt, err = db.Prepare("UPDATE cards SET to_delete = 1 WHERE id = ?")
+        delStmt, err = db.Prepare("UPDATE list_cards SET to_delete = 1 WHERE id = ?")
         if (err != nil) {
                 fmt.Println("error preparing statement", err)
                 tpl.ExecuteTemplate(w, "dashboard.html", "There was a problem registering this account")
@@ -545,7 +545,7 @@ func DelCardHandler(w http.ResponseWriter, r *http.Request) {
 
         defer delStmt.Close()
 
-        http.Redirect(w, r, "/dashboard", http.StatusFound)
+        //http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
 
 func DashboardHandler(w http.ResponseWriter, r *http.Request) {

@@ -348,6 +348,4 @@ func DelBankAccountHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	defer delStmt.Close()
-	
-	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }

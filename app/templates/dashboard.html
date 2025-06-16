@@ -134,80 +134,216 @@
 		</div>
 	</div>
 
-	<!-- The Modal -->
-    <dialog id="editStickyModal">
-        <form class="form" method="dialog">
-            <span class="closeEditSticky btn btn-danger">Cancel</span>
-            <label for="title">Title:</label>
-            <input type="text" id="title" name="title"><br><br>
-	    <p>Description</p>
-            <textarea row="10" cols="40" maxlength="140" name="description" id="description" spellcheck="true" placeholder="Enter the description here"></textarea>
+	<!-- Edit Sticky Modal -->
+	<div class="modal fade" id="editStickyModal" tabindex="-1" aria-labelledby="editStickyModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-dialog-centered mx-auto">
+			<div class="modal-content">
+				<form class="form" id="editStickyForm">
+					<div class="modal-header">
+						<h5 class="modal-title" id="editStickyModalLabel">Edit Sticky Note</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
+					</div>
+					<div class="modal-body">
+						<div class="mb-3">
+							<label for="title" class="form-label">Title:</label>
+							<input type="text" class="form-control" id="title" name="title" required>
+						</div>
+						<div class="mb-3">
+							<label for="description" class="form-label">Description:</label>
+							<textarea rows="5" maxlength="140" name="description" id="description" class="form-control" spellcheck="true" placeholder="Enter the description here" required></textarea>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+						<input type="submit" class="btn btn-success" value="Submit">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 
-            <input type="submit" class="btn btn-success"value="Submit">
-        </form>
-    </dialog>
+	<!-- Add Sticky Modal -->
+	<div class="modal fade" id="addStickyModal" tabindex="-1" aria-labelledby="addStickyModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-dialog-centered mx-auto">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="addStickyModalLabel">Add Sticky Note</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<form class="form">
+					<div class="modal-body">
+						<div class="mb-3">
+							<label for="title" class="form-label">Title:</label>
+							<input type="text" id="title" name="title" class="form-control">
+						</div>
+						<div class="mb-3">
+							<label for="description" class="form-label">Description:</label>
+							<textarea rows="5" cols="40" maxlength="140" name="description" id="description" class="form-control" spellcheck="true" placeholder="Enter the description here"></textarea>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-success">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 
-    <!-- Add Sticky Modal -->
-    <dialog id="addStickyModal">
-    	<form class="form" method="dialog">
-            <span class="closeAddSticky btn btn-danger">Cancel</span>
-            <label for="title">Title:</label>
-            <input type="text" id="title" name="title">
-	    <p>Description</p>
-	    <textarea row="10" cols="40" maxlength="140" name="description" id="description" spellcheck="true" placeholder="Enter the description here"></textarea>
-		
+	<!-- Add Bank Account Modal -->
+	<div class="modal fade" id="addBankAccountModal" tabindex="-1" aria-labelledby="addBankAccountModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered mx-auto">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="addBankAccountModalLabel">Add Bank Account</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<form class="form">
+					<div class="modal-body">
+						<div class="mb-3">
+							<label for="bank" class="form-label">Choose a bank:</label>
+							<select id="bank" name="bank" class="form-select">
+								{{ range .Banks }}
+								<option value="{{.ID}}">{{.Name}}</option>
+								{{ end }}
+							</select>
+						</div>
+						<div class="mb-3">
+							<label for="amount" class="form-label">Amount: $</label>
+							<input type="text" id="amount" name="amount" class="form-control" pattern="^\d+(\.\d{1,2})?$" required>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-success">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 
-            <input type="submit" class="btn btn-success"value="Submit">
-        </form>
-    </dialog>
+	<!-- Edit Bank Account Modal -->
+	<div class="modal fade" id="editBankAccountModal" tabindex="-1" aria-labelledby="editBankAccountModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<form class="form">
+					<div class="modal-header">
+						<h5 class="modal-title" id="editBankAccountModalLabel">Edit Bank Account</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="mb-3">
+							<label for="bankAccountAmount" class="form-label">Amount:</label>
+							<input type="text" id="bankAccountAmount" name="bankAccountAmount" pattern="^\d+(\.\d{1,2})?$" required class="form-control">
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-success">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 
-    <!-- Add Bank Account Modal -->
-    <dialog id="addBankAccountModal">
-    	<form class="form" method="dialog">
-		<span class="closeAddBankAccount btn btn-danger">Cancel</span>
-		<label for="bank">Choose a bank:</label>
-		<select id="bank" name="bank">
-			{{ range .Banks }}
-			<option value="{{.ID}}">{{.Name}}</option>
-			{{ end }}
-		</select>
-		<label for="amount">Amount: $</label>
-		<input type="text" id="amount" name="amount" pattern="^\d+(\.\d{1,2})?$" required><br><br>
-		<input type="submit" class="btn btn-success" value="Submit">
-	</form>
-   </dialog>
+	<!-- CD Modal -->
+	<div class="modal fade" id="addCDModal" tabindex="-1" aria-labelledby="addCDModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered mx-auto">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="addCDModalLabel">Add Certificate of Deposit</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<form class="form">
+					<div class="modal-body">
+						<div class="mb-3">
+							<label for="bank" class="form-label">Choose a bank:</label>
+							<select id="bank" name="bank" class="form-select">
+								{{ range .Banks }}
+								<option value="{{.ID}}">{{.Name}}</option>
+								{{ end }}
+							</select>
+						</div>
+						<div class="mb-3">
+							<label for="startDate" class="form-label">Beginning Date:</label>
+							<input type="date" id="startDate" name="startDate" class="form-control" required>
+						</div>
+						<div class="mb-3">
+							<label for="deposit" class="form-label">Initial Deposit ($):</label>
+							<input type="text" id="deposit" name="deposit" class="form-control" pattern="^\d+(\.\d{1,2})?$" required>
+						</div>
+						<div class="mb-3">
+							<label for="term" class="form-label">Term Length (months):</label>
+							<input type="text" id="term" name="term" class="form-control" pattern="^\d+$" required>
+						</div>
+						<div class="mb-3">
+							<label for="apy" class="form-label">APR Rate (%):</label>
+							<input type="text" id="apy" name="apy" class="form-control" pattern="^\d+(\.\d{3,5})?$" required>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-success">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 
-   <!-- Edit Bank Account Modal -->
-   <dialog id="editBankAccountModal">
-   	<form class="form" method="dialog">
-		<span class="closeEditBankAccount btn btn-danger">Cancel</span>
-		<label for="bankAccountAmount">Amount:</label>
-		<input type="text" id="bankAccountAmount" name="bankAccountAmount" pattern="^\d+(\.\d{1,2})?$" required><br><br>
-		<input type="submit" class="btn btn-success" value="Submit">
-	</form>
-   </dialog>
+	<!-- Edit CD Modal -->
+	<div class="modal fade" id="editCDModal" tabindex="-1" aria-labelledby="editCDModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered mx-auto">
+			<div class="modal-content">
+				<form class="form" id="editCDForm">
+					<div class="modal-header">
+						<h5 class="modal-title" id="editCDModalLabel">Edit Certificate of Deposit</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
+					</div>
+					<div class="modal-body">
+						<div class="mb-3">
+							<label for="bank" class="form-label">Choose a bank:</label>
+							<select id="bank" name="bank" class="form-select" required>
+								{{ range .Banks }}
+								<option value="{{.ID}}">{{.Name}}</option>
+								{{ end }}
+							</select>
+						</div>
+						<div class="mb-3">
+							<label for="startDate" class="form-label">Beginning Date:</label>
+							<input type="date" id="startDate" name="startDate" class="form-control" required>
+						</div>
+						<div class="mb-3">
+							<label for="deposit" class="form-label">Initial Deposit ($):</label>
+							<input type="text" id="deposit" name="deposit" pattern="^\d+(\.\d{1,2})?$" class="form-control" required>
+						</div>
+						<div class="mb-3">
+							<label for="term" class="form-label">Term Length (months):</label>
+							<input type="text" id="term" name="term" pattern="^\d+$" class="form-control" required>
+						</div>
+						<div class="mb-3">
+							<label for="apy" class="form-label">APR Rate (%):</label>
+							<input type="text" id="apy" name="apy" pattern="^\d+(\.\d{3,5})?$" class="form-control" required>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+						<input type="submit" class="btn btn-success" value="Submit">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 
-   <!-- CD Modal -->
-   <dialog id="addCDModal">
-   	<form class="form" method="dialog">
-		<span class="closeAddCD btn btn-danger">Cancel</span>
-		<label for="bank">Choose a bank:</label>
-		<select id="bank" name="bank">
-			{{ range .Banks }}
-                        <option value="{{.ID}}">{{.Name}}</option>
-                        {{ end }}
-		</select><br><br>
-		<label for="startDate">Begining Date:</label>
-		<input type="date" id="startDate" name="startDate" required><br><br>
-		<label for="deposit">Initial Deposit: $</label>
-		<input type="text" id="deposit" name="deposit" pattern="^\d+(\.\d{1,2})?$" required><br><br>
-		<label for="term">Term Length (months):</label>
-		<input type="text" id="term" name="term" pattern="^\d+(\.\d{0})?$" required><br><br>
-		<label for="apy">APR Rate: %</label>
-		<input type="text" id="apy" name="apy" pattern="^\d+(\.\d{3,5})?$" required><br><br>
-		<input type="submit" class="btn btn-success" value="Submit">
-	</form>
-   </dialog>
+	<!-- Toast Container -->
+	<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+		<div id="toastContainer" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+			<div class="d-flex">
+				<div class="toast-body" id="toastMessage">Success!</div>
+				<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+			</div>
+		</div>
+	</div>
+
 
 	<script type="text/javascript" src="/static/js/addBankAccountModal.js"></script>
 	<script type="text/javascript" src="/static/js/bankAccount.js"></script>

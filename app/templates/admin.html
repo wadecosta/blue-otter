@@ -12,34 +12,63 @@
 		</div>
 
 		<!-- Add Bank Modal -->
-		<dialog id="addBankModal">
-			<form class="form" enctype="multipart/form-data">
-				<span class="closeAddBank btn btn-danger">Cancel</span><br><br>
-				<label for="title">Bank Name:</label>
-				<input type="text" id="title" name="title" required><br><br>
-				<label for="bank_image">Bank Image</label>
-				<input type="file" id="bank_image" name="bank_image" required><br><br>
-				<input type="submit" class="btn btn-success" value="Submit">
-			</form>
-		</dialog>
+		<div class="modal fade" id="addBankModal" tabindex="-1" aria-labelledby="addBankModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered mx-auto">
+				<div class="modal-content">
+					<form class="form" enctype="multipart/form-data">
+						<div class="modal-header">
+							<h5 class="modal-title" id="addBankModalLabel">Add Bank</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
+						</div>
+						<div class="modal-body">
+							<div class="mb-3">
+								<label for="title" class="form-label">Bank Name:</label>
+								<input type="text" id="title" name="title" class="form-control" required>
+							</div>
+							<div class="mb-3">
+								<label for="bank_image" class="form-label">Bank Image:</label>
+								<input type="file" id="bank_image" name="bank_image" class="form-control" required>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+							<input type="submit" class="btn btn-success" value="Submit">
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
 
 		<!-- Add Credit Card Modal -->
-		<dialog id="addCreditCardModal">
-			<form class="form" enctype="multipart/form-data">
-				<span class="closeAddCreditCard btn btn-danger">Cancel</span><br><br>
-				<label for="bank_name">Choose a bank:</label>
-				<select id="bank_name" name="bank_name">
-					{{ range .Banks }}
-                        			<option value="{{.ID}}">{{.Name}}</option>
-                        		{{ end }}
-				</select><br><br>
-				<label for="card_name">Card Name</label>
-				<input type="text" id="card_name" name="card_name" required><br><br>
-				<label for="card_image">Card Image</label>
-                                <input type="file" id="card_image" name="card_image" required><br><br>
-				<input type="submit" class="btn btn-success" value="Submit">
-			</form>
-		</dialog>
+		<div class="modal fade" id="addCreditCardModal" tabindex="-1" aria-labelledby="addCreditCardModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered mx-auto">
+				<div class="modal-content">
+					<form class="form" enctype="multipart/form-data">
+						<div class="modal-header">
+							<h5 class="modal-title" id="addCreditCardModalLabel">Add Credit Card</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<label for="bank_name">Choose a bank:</label>
+							<select id="bank_name" name="bank_name" class="form-select" required>
+								{{ range .Banks }}
+									<option value="{{.ID}}">{{.Name}}</option>
+								{{ end }}
+							</select><br>
+							<label for="card_name">Card Name:</label>
+							<input type="text" id="card_name" name="card_name" class="form-control" required><br>
+							<label for="card_image">Card Image:</label>
+							<input type="file" id="card_image" name="card_image" class="form-control" required>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+							<input type="submit" class="btn btn-success" value="Submit">
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
 
 		<br><br>
 		<div style = "margin:auto; width:50%; border: 3px solid black; padding:10px; border-radius: 25px;" >
@@ -71,10 +100,33 @@
 			</div>
 
 			<hr class="hr" />
+
+			{{ range .Cards }}
+
+			<div class="row justify-context-around text-white bg-dark mb-3 mx-auto">
+				<div class="col-sm">{{.CardBank}} - {{.CardName}}</div>
+				<div class="col-sm"><img src="{{.CardArtwork}}"></div>
+				<div class="col-sm"><button id="{{.ID}}" onclick="postDeleteCard(this.id)" class="btn btn-danger">ⓧ</button></div>
+			</div>
+
+			{{ end }}
 		</div>
+
+		<!-- TOAST message -->
+		<div id="toastContainer" class="toast align-items-center position-fixed bottom-0 end-0 m-3 text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+			<div class="d-flex">
+				<div class="toast-body" id="toastMessage">
+					<!-- Message will be injected here -->
+				</div>
+
+				<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+			</div>
+		</div>
+
 
 		<script type="text/javascript" src="/static/js/addBankModal.js?v=1.0"></script>
 		<script type="text/javascript" src="/static/js/addCreditCardModal.js"></script>
 		<script type="text/javascript" src="/static/js/bank.js"></script>
+		<script type="text/javascript" src="/static/js/card.js"></script>
 	</body>
 </html>

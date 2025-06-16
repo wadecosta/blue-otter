@@ -1,83 +1,86 @@
-document.addEventListener('DOMContentLoaded', (event) => {
-	let modal = document.getElementById("editStickyModal");
-	let span = document.querySelector(".closeEditSticky");
-	let title = document.getElementById("title");
-	   
-	/* Needed for encryption/decryption */
-	let key = sessionStorage.getItem("key");
-	let iv = document.getElementById("iv").value;
+document.addEventListener('DOMContentLoaded', () => {
+  const modalElement = document.getElementById("editStickyModal");
+  const bsModal = new bootstrap.Modal(modalElement);
 
-	let id;
-	let encryptedDescription;
-	let encryptedTitle;
+  const form = document.getElementById("editStickyForm");
+  const titleInput = document.getElementById("title");
+  const descriptionInput = document.getElementById("description");
 
-	document.querySelectorAll('.open-edit-sticky-button').forEach(button => {
-		button.onclick = function() {
-			id = this.getAttribute("data-id");
+  const key = sessionStorage.getItem("key");
+  const iv = document.getElementById("iv").value;
 
-			encryptedTitle = this.getAttribute("data-title");
-			decryptedTitle = decryptText(encryptedTitle, key, iv);
-			title.value = decryptedTitle;
+  let id, encryptedTitle, encryptedDescription;
 
-			encryptedDescription = this.getAttribute("data-description");
-			let decryptedDescription = decryptText(encryptedDescription, key, iv);
-			description.value = decryptedDescription;
+  // Handle open buttons
+  document.querySelectorAll('.open-edit-sticky-button').forEach(button => {
+    button.addEventListener('click', () => {
+      id = button.getAttribute("data-id");
+      encryptedTitle = button.getAttribute("data-title");
+      encryptedDescription = button.getAttribute("data-description");
 
-			modal.showModal();
-		}
-	});
+      const decryptedTitle = decryptText(encryptedTitle, key, iv);
+      const decryptedDescription = decryptText(encryptedDescription, key, iv);
 
-	span.onclick = function() {
-		modal.close();
-	}
+      titleInput.value = decryptedTitle;
+      descriptionInput.value = decryptedDescription;
 
-	modal.addEventListener('click', function(event) {
-		if (event.target === modal) {
-			modal.close();
-		}
-	});
+      bsModal.show();
+    });
+  });
 
-	let form = modal.querySelector("form");
-	form.addEventListener("submit", function(event) {
-		event.preventDefault();
-		console.log("GOT YOU");
+  // Reset form on modal hide
+  modalElement.addEventListener('hidden.bs.modal', () => {
+    form.reset();
+  });
 
-		let changedTitle = title.value;
-		let changedDescription = description.value;
+  // Show toast helper
+  function showToast(message, isSuccess = true) {
+    const toastEl = document.getElementById("toastContainer");
+    const toastMsg = document.getElementById("toastMessage");
 
-		console.log(changedTitle);
-		console.log(changedDescription);
+    toastEl.classList.remove("text-bg-success", "text-bg-danger");
+    toastEl.classList.add(isSuccess ? "text-bg-success" : "text-bg-danger");
+    toastMsg.textContent = message;
 
-		let changedEncryptedTitle = encryptText(changedTitle, key, iv);
-		let changedEncryptedDescription = encryptText(changedDescription, key, iv);
+    const toast = new bootstrap.Toast(toastEl, { delay: 10000 });
+    toast.show();
+  }
 
-		console.log(changedEncryptedTitle);
-		console.log(changedEncryptedDescription);
-		console.log(id);
+  // Form submission
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
 
-		const xhr = new XMLHttpRequest();
-		xhr.open("POST", "/editSticky");
-		xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+    const changedTitle = titleInput.value;
+    const changedDescription = descriptionInput.value;
 
-		const body = JSON.stringify({
-			id: id.toString(),
-			old_sticky_description: encryptedDescription,
-			old_sticky_title: encryptedTitle.toString(),
-			new_sticky_description: changedEncryptedDescription.toString(),
-			new_sticky_title: changedEncryptedTitle.toString()
-		});
+    const changedEncryptedTitle = encryptText(changedTitle, key, iv);
+    const changedEncryptedDescription = encryptText(changedDescription, key, iv);
 
-		xhr.onreadystatechange = function() {
-			if (xhr.readyState === XMLHttpRequest.DONE) {
-				if (xhr.status === 200) {
-					window.location.reload();
-				} else {
-					console.error("Failed to saved changes:", xhr.status, xhr.statusText);
-				}
-			}
-		};
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/editSticky");
+    xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
 
-		xhr.send(body);
-		modal.close();
-	});
+    const body = JSON.stringify({
+      id: id.toString(),
+      old_sticky_title: encryptedTitle,
+      old_sticky_description: encryptedDescription,
+      new_sticky_title: changedEncryptedTitle.toString(),
+      new_sticky_description: changedEncryptedDescription.toString()
+    });
+
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
+          showToast("Sticky note updated successfully!");
+          setTimeout(() => window.location.reload(), 1000);
+        } else {
+          showToast("Failed to update sticky note.", false);
+          console.error("Failed to save changes:", xhr.status, xhr.statusText);
+        }
+      }
+    };
+
+    xhr.send(body);
+    bsModal.hide();
+  });
 });

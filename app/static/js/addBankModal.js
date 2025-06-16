@@ -1,47 +1,55 @@
-document.addEventListener('DOMContentLoaded', (event) => {
-	
-	let modal = document.getElementById("addBankModal");
-	if (!modal) {
-		console.error("Modal element not found");
-	}
+document.addEventListener('DOMContentLoaded', () => {
+    const modalElement = document.getElementById("addBankModal");
+    const form = modalElement?.querySelector("form");
+    const toastElement = document.getElementById("toastContainer");
+    const toastMessage = document.getElementById("toastMessage");
+    const bsToast = new bootstrap.Toast(toastElement, { delay: 10000 });
 
-	let span = document.querySelector(".closeAddBank");
+    if (!modalElement || !form || !toastElement || !toastMessage) {
+        console.error("Required DOM elements not found");
+        return;
+    }
 
-	document.querySelectorAll('.open-add-bank-button').forEach(button => {
-		button.onclick = function() {
-			modal.showModal();
-		}
-	});
+    const bootstrapModal = new bootstrap.Modal(modalElement);
 
-	span.onclick = function() {
-		modal.close();
-	}
+    document.querySelectorAll('.open-add-bank-button').forEach(button => {
+        button.addEventListener('click', () => {
+            bootstrapModal.show();
+        });
+    });
 
-	modal.addEventListener('click', function(event) {
-		if (event.target === modal) {
-			modal.close();
-		}
-	});
+    modalElement.addEventListener('hidden.bs.modal', () => {
+        form.reset();
+    });
 
-	let form = modal.querySelector("form");
-	form.addEventListener("submit", function(event) {
-		event.preventDefault();
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-		const formData = new FormData(form);
+        const formData = new FormData(form);
 
-		/* Send the form data (including the file */
-		fetch("/addBank", {
-			method: "POST",
-			body: formData,
-		})
-		.then(response => response.json())
-		.then(data => {
-			alert("Upload Successful");
-			modal.close();
-		})
-		.catch(error => {
-			alert("Error uploading file");
-			console.error(error);
-		});
-	});
+        fetch("/addBank", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Upload failed");
+            }
+            return response.json();
+        })
+        .then(data => {
+            toastElement.classList.remove("text-bg-danger");
+            toastElement.classList.add("text-bg-success");
+            toastMessage.textContent = "Bank added successfully!";
+            bsToast.show();
+            bootstrapModal.hide();
+        })
+        .catch(error => {
+            toastElement.classList.remove("text-bg-success");
+            toastElement.classList.add("text-bg-danger");
+            toastMessage.textContent = "Error uploading bank.";
+            bsToast.show();
+            console.error(error);
+        });
+    });
 });

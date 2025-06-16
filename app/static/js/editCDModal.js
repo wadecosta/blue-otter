@@ -1,76 +1,62 @@
-document.addEventListener('DOMContentLoaded', (event) => {
-	let modal = document.getElementById('addCDModal');
-	let span = document.querySelector('.closeAddCD');
+document.addEventListener('DOMContentLoaded', () => {
+    const modalElement = document.getElementById('editCDModal');
+    if (!modalElement) {
+        console.error("editCDModal not found");
+        return;
+    }
 
-	/* Needed for encryption/decryption */
-	let key = sessionStorage.getItem("key");
-	let iv = document.getElementById("iv").value;
-	
-	let id;
-	let encryptedBank;
-	let encryptedStartDate;
-	let encryptedDeposit;
-	let encryptedTerm;
-	let encryptedApy;
+    const bootstrapModal = new bootstrap.Modal(modalElement);
+    const form = modalElement.querySelector("form");
 
-	document.querySelectorAll('.open-edit-CD-button').forEach(button => {
-		button.onclick = function() {
-			id = this.getAttribute("data-id");
+    const key = sessionStorage.getItem("key");
+    const ivElement = document.getElementById("iv");
+    const iv = ivElement ? ivElement.value : "";
 
-			let bankID = this.getAttribute("data-bank");
-			let bankElement = document.getElementById("bank");
+    let id;
+    let encryptedBank, encryptedStartDate, encryptedDeposit, encryptedTerm, encryptedApy;
 
-			console.log("Bank ID:", bankID);
-			
-			if (bankElement) {
-            console.log("Dropdown options:", [...bankElement.options].map(opt => opt.value));
+    document.querySelectorAll('.open-edit-CD-button').forEach(button => {
+        button.addEventListener('click', () => {
+            id = button.getAttribute("data-id");
 
-            // Attempt direct value assignment
-            bankElement.value = bankID;
+            const bankID = button.getAttribute("data-bank");
+            const bankElement = modalElement.querySelector("#bank");
 
-            // If direct assignment fails, manually select the option
-            if (bankElement.value !== bankID) {
-                console.warn(`Direct selection failed for "${bankID}", selecting manually.`);
-                for (let option of bankElement.options) {
-                    if (option.value === bankID) {
-                        option.selected = true;
-                        console.log(`Selected option: ${option.value}`);
-                        break;
+            if (bankElement) {
+                bankElement.value = bankID;
+                if (bankElement.value !== bankID) {
+                    for (let option of bankElement.options) {
+                        if (option.value === bankID) {
+                            option.selected = true;
+                            break;
+                        }
                     }
                 }
             }
-        }
 
+            encryptedStartDate = button.getAttribute("data-start-date");
+            encryptedDeposit = button.getAttribute("data-deposit");
+            encryptedTerm = button.getAttribute("data-term");
+            encryptedApy = button.getAttribute("data-apy");
 
-			encryptedStartDate = this.getAttribute("data-start-date");
-			decryptedStartDate = decryptText(encryptedStartDate, key, iv);
+            const decryptedStartDate = decryptText(encryptedStartDate, key, iv);
+            const decryptedDeposit = decryptText(encryptedDeposit, key, iv);
+            const decryptedTerm = decryptText(encryptedTerm, key, iv);
+            const decryptedApy = decryptText(encryptedApy, key, iv);
 
-			encryptedDeposit = this.getAttribute("data-deposit");
-			decryptedDeposit = decryptText(encryptedDeposit, key, iv);
+            modalElement.querySelector("#startDate").value = decryptedStartDate;
+            modalElement.querySelector("#deposit").value = decryptedDeposit;
+            modalElement.querySelector("#term").value = decryptedTerm;
+            modalElement.querySelector("#apy").value = decryptedApy;
 
-			encryptedTerm = this.getAttribute("data-term");
-			decryptedTerm = decryptText(encryptedTerm, key, iv);
+            bootstrapModal.show();
+        });
+    });
 
-			encryptedApy = this.getAttribute("data-apy");
-			decryptedApy = decryptText(encryptedApy, key, iv);
+    modalElement.addEventListener('hidden.bs.modal', () => {
+        form.reset(); // Clear all fields when closed
+    });
 
-
-			document.getElementById("startDate").value = decryptedStartDate;
-            		document.getElementById("deposit").value = decryptedDeposit;
-            		document.getElementById("term").value = decryptedTerm;
-            		document.getElementById("apy").value = decryptedApy;
-
-			modal.showModal();
-		}
-	});
-
-	span.onclick = function() {
-		modal.close();
-	};
-	
-	modal.addEventListener('click', function(event) {
-		if (event.target === modal) {
-			modal.close();
-		}
-	});
+    // Add form submission logic here as needed
 });
+

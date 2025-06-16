@@ -1,85 +1,79 @@
-document.addEventListener('DOMContentLoaded', (event) => {
-	
-	let modal = document.getElementById("addCDModal");
-	if (!modal) {
-		console.error("Modal element not found");
-		return;
-	}
+document.addEventListener('DOMContentLoaded', () => {
+    const modalElement = document.getElementById("addCDModal");
+    if (!modalElement) {
+        console.error("Modal element not found");
+        return;
+    }
 
-	let span = document.querySelector(".closeAddCD");
+    const bootstrapModal = new bootstrap.Modal(modalElement);
+    const form = modalElement.querySelector("form");
+    const key = sessionStorage.getItem("key");
+    const iv = document.getElementById("iv")?.value;
 
-	let key = sessionStorage.getItem("key");
-	let iv = document.getElementById("iv").value;
+    const toastElement = document.getElementById("toastContainer");
+    const toastMessage = document.getElementById("toastMessage");
+    const bsToast = new bootstrap.Toast(toastElement, { delay: 10000 }); // 10 sec
 
-	document.querySelectorAll('.open-CD-button').forEach(button => {
-		const dialog = document.getElementById('addCDModal');
+    // Show modal on button click
+    document.querySelectorAll('.open-CD-button').forEach(button => {
+        button.addEventListener('click', () => {
+            bootstrapModal.show();
+        });
+    });
 
-		function clearDialog() {
-			dialog.close(); // Close the dialog
-			dialog.innerHTML = ''; // Clear its content
-		}
+    // Reset form when modal is closed
+    modalElement.addEventListener('hidden.bs.modal', () => {
+        form.reset();
+    });
 
-		button.onclick = function() {
-			modal.showModal();
-		}
-	});
+    // Handle form submission
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
 
-	span.onclick = function() {
-		modal.close();
-	}
+        const bank = form.querySelector("#bank").value;
+        const startDate = form.querySelector("#startDate").value;
+        const deposit = form.querySelector("#deposit").value;
+        const term = form.querySelector("#term").value;
+        const apy = form.querySelector("#apy").value;
 
-	modal.addEventListener('click', function(event) {
-		if (event.target === modal) {
-			modal.close();
-		}
-	});
+        const encryptedStartDate = encryptText(startDate, key, iv);
+        const encryptedDeposit = encryptText(deposit, key, iv);
+        const encryptedTerm = encryptText(term, key, iv);
+        const encryptedApy = encryptText(apy, key, iv);
 
-	let form = modal.querySelector("form");
+        const body = JSON.stringify({
+            bank: bank.toString(),
+            startDate: encryptedStartDate.toString(),
+            deposit: encryptedDeposit.toString(),
+            term: encryptedTerm.toString(),
+            apy: encryptedApy.toString()
+        });
 
-	form.addEventListener("submit", function(event) {
-		event.preventDefault();
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/addCD");
+        xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
 
-		let bankInput = modal.querySelector("#bank");
-		let startDateInput = modal.querySelector("#startDate");
-		let depositInput = modal.querySelector("#deposit");
-		let termInput = modal.querySelector("#term");
-		let aprInput = modal.querySelector("#apy");
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    toastElement.classList.remove("text-bg-danger");
+                    toastElement.classList.add("text-bg-success");
+                    toastMessage.textContent = "CD added successfully!";
+                    bsToast.show();
 
-		let bankValue = bankInput.value;
-		let startDateValue = startDateInput.value;
-		let depositValue = depositInput.value;
-		let termValue = termInput.value;
-		let apyValue = aprInput.value;
+                    form.reset();
+                    bootstrapModal.hide();
+                    setTimeout(() => window.location.reload(), 500); // Reload after modal closes
+                } else {
+                    toastElement.classList.remove("text-bg-success");
+                    toastElement.classList.add("text-bg-danger");
+                    toastMessage.textContent = "Failed to add CD.";
+                    bsToast.show();
+                }
+            }
+        };
 
-		let encryptedStartDate = encryptText(startDateValue, key, iv);
-		let encryptedDeposit = encryptText(depositValue, key, iv);
-		let encryptedTerm = encryptText(termValue, key, iv);
-		let encryptedApy = encryptText(apyValue, key, iv);
-
-		const xhr = new XMLHttpRequest();
-		xhr.open("POST", "/addCD");
-		xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
-
-		const body = JSON.stringify({
-			bank: bankValue.toString(),
-			startDate: encryptedStartDate.toString(),
-			deposit: encryptedDeposit.toString(),
-			term: encryptedTerm.toString(),
-			apy: encryptedApy.toString()
-		});
-
-		xhr.onreadystatechange = function() {
-			if(xhr.readyState === XMLHttpRequest.DONE) {
-				if(xhr.status === 200) {
-					window.location.reload();
-				} else {
-					console.error("Failed to add CD:", xhr.status, xhr.statusText);
-				}
-			}
-		};
-
-		xhr.send(body);
-		modal.close();
-
-	});
+        xhr.send(body);
+    });
 });
+
