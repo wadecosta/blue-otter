@@ -214,8 +214,6 @@ func DelBankHandler(w http.ResponseWriter, r *http.Request) {
         }
 
         defer delStmt.Close()
-
-        http.Redirect(w, r, "/admin", http.StatusFound)
 }
 
 func AddBankAccountHandler(w http.ResponseWriter, r *http.Request) {

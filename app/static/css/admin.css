@@ -1,0 +1,28 @@
+#bankList {
+	max-height: 100px;        /* ~10 rows at ~80px each */
+	overflow-y: auto;
+	padding-right: 2px;      /* prevent scrollbar overlap */
+}
+
+/* Optional: highlight for keyboard navigation */
+.bank-item.active {
+	outline: 2px solid #0d6efd;
+	background-color: #1a1a1a;
+}
+
+/* CARD */
+.card-item.active {
+	outline: 2px solid #0d6efd;
+	background-color: #1a1a1a;
+}
+
+#cardList {
+        max-height: 100px;        /* ~10 rows at ~80px each */
+        overflow-y: auto;
+        padding-right: 2px;      /* prevent scrollbar overlap */
+}
+
+mark {
+	background-color: yellow;
+	padding: 0;
+}

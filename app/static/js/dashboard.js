@@ -33,10 +33,10 @@ if(sessionStorage.getItem("key") === null) {
 		/* Add amount to TotalAmount */
 		TotalBankAccountDollar += parseFloat(tempAccountDecrypted);
 
-		document.getElementById('A-'+i).innerText = tempAccountDecrypted;
+		document.getElementById('A-'+i).innerText = '$' + tempAccountDecrypted.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	}
 
-	document.getElementById("BankAccountTotal").innerText = "Total Balance $" + TotalBankAccountDollar.toFixed(2);
+	document.getElementById("BankAccountTotal").innerText = "Total Balance : $" + TotalBankAccountDollar.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 
 	/* Decrypt CD */

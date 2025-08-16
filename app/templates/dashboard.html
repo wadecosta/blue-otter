@@ -21,7 +21,7 @@
 
 				<div class="card-body d-flex align-items-center justify-content-center gap-3">
 					<h2 class="mb-0">Notes</h2>
-					<button class="button btn btn-success open-add-sticky-button mb-0">+</button>
+					<button class="button btn btn-sm btn-success open-add-sticky-button mb-0">+</button>
 				</div>
 
 				<br>
@@ -29,9 +29,9 @@
 				{{ range .Stickies }}
 					<div class="sticky card text-white bg-dark flex-grow-1 flex-wrap">
 						<div class="card-header d-flex align-items-center justify-content-between gap-3">
-							<button class="btn btn-warning open-edit-sticky-button mb-0" data-modal-id="M-{{.DashID}}" data-title="{{.Title}}" data-description="{{.Description}}" data-id="{{.ID}}">O</button>
+							<button class="btn btn-sm btn-warning open-edit-sticky-button mb-0" data-modal-id="M-{{.DashID}}" data-title="{{.Title}}" data-description="{{.Description}}" data-id="{{.ID}}">O</button>
 							<p class="mb-0" id="T-{{.DashID}}" value="{{.Title}}">{{.Title}}</p>
-							<button id="{{.ID}}" onclick="postDeleteSticky(this.id)" class="btn btn-danger">X</button>
+							<button id="{{.ID}}" onclick="postDeleteSticky(this.id)" class="btn btn-sm btn-danger">X</button>
 						</div>
 						<div class="card-body">
 							<p class="card-text" id="D-{{.DashID}}" value="{{.Description}}">{{.Description}}</p>
@@ -54,7 +54,7 @@
 			<ul>
 				<div class="card-body d-flex align-items-center justify-content-center gap-3">
                                         <h2 class="mb-0">CDs</h2>
-                                        <button class="btn btn-success open-CD-button">+</button>
+                                        <button class="btn btn-sm btn-success open-CD-button">+</button>
                                 </div> 
 
 				<br>
@@ -66,9 +66,9 @@
 				{{ range .CDs }}
 					<div class="CD card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
 						<div class="card-header d-flex align-items-center justify-content-between gap-3">
-							<button class="btn btn-warning open-edit-CD-button mb-0" data-bank="{{.BankID}}" data-start-date="{{.StartDate}}" data-deposit="{{.Deposit}}" data-term="{{.Term}}" data-apy="{{.Apy}}" data-id="{{.ID}}">O</button>
+							<button class="btn btn-sm btn-warning open-edit-CD-button mb-0" data-bank="{{.BankID}}" data-start-date="{{.StartDate}}" data-deposit="{{.Deposit}}" data-term="{{.Term}}" data-apy="{{.Apy}}" data-id="{{.ID}}">O</button>
 							<p class="{{.BankName}} mb-0">{{.BankName}}</p>
-							<button id="{{.ID}}" onclick="postDeleteCD(this.id)" class="btn btn-danger mb-0">X</button>
+							<button id="{{.ID}}" onclick="postDeleteCD(this.id)" class="btn btn-sm btn-danger mb-0">X</button>
 						</div>
 
 						<div class="card-body">
@@ -87,7 +87,7 @@
 			<ul>
 				<div class="card-body d-flex align-items-center justify-content-center gap-3">
 					<h2 class="mb-0">Checking, Saving, Money Market</h2>
-					<button class="btn btn-success open-add-bank-account-button">+</button>
+					<button class="btn btn-sm btn-success open-add-bank-account-button">+</button>
 				</div>
 
 				<br>
@@ -99,9 +99,9 @@
 				{{ range .BankAccounts }}
 					<div class="bank_account card text-white bg-dark mb-3 mx-auto" style="margin:auto; width:75%; padding:10px;">
                                                 <div class="card-header d-flex align-items-center justify-content-between gap-3">
-							<button class="button btn btn-warning open-edit-bank-account-button mb-0" data-amount="{{.Amount}}" data-id="{{.ID}}">O</button>
+							<button class="button btn btn-sm btn-warning open-edit-bank-account-button mb-0" data-amount="{{.Amount}}" data-id="{{.ID}}">O</button>
                                                         <p id="{{.BankName}}">{{.BankName}}</p>
-							<button id="{{.ID}}" onclick="postDeleteBankAccount(this.id)" class="btn btn-danger">X</button>
+							<button id="{{.ID}}" onclick="postDeleteBankAccount(this.id)" class="btn btn-sm btn-danger">X</button>
                                                 </div>
 
                                                 <div class="card-body">
@@ -125,7 +125,7 @@
 			<ul>
 				<div class="card-body d-flex align-items-center justify-content-center gap-3">
                                         <h2 class="mb-0">Credit Card</h2>
-                                        <button class="btn btn-success open-add-credit-card-button">+</button>
+                                        <button class="btn btn-sm btn-success open-add-credit-card-button">+</button>
                                 </div>
 				
 				<br>
@@ -246,6 +246,38 @@
 		</div>
 	</div>
 
+	<!-- TODO Add Credit Card Account Modal -->
+        <div class="modal fade" id="addCreditCardAccountModal" tabindex="-1" aria-labelledby="addCreditCardAccountModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered mx-auto">
+                        <div class="modal-content">
+                                <div class="modal-header">
+                                        <h5 class="modal-title" id="addBankCreditCardAccountModalLabel">Add Credit Card Account</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form class="form">
+                                        <div class="modal-body">
+                                                <div class="mb-3">
+                                                        <label for="card" class="form-label">Choose a Card:</label>
+                                                        <select id="card" name="card" class="form-select">
+                                                                {{ range .Banks }}
+                                                                <option value="{{.ID}}">{{.Name}}</option>
+                                                                {{ end }}
+                                                        </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                        <label for="amount" class="form-label">Amount: $</label>
+                                                        <input type="text" id="amount" name="amount" class="form-control" pattern="^\d+(\.\d{1,2})?$" required>
+                                                </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-success">Submit</button>
+                                        </div>
+                                </form>
+                        </div>
+                </div>
+        </div>
+
 	<!-- CD Modal -->
 	<div class="modal fade" id="addCDModal" tabindex="-1" aria-labelledby="addCDModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered mx-auto">
@@ -331,6 +363,14 @@
 					</div>
 				</form>
 			</div>
+		</div>
+	</div>
+
+	<!-- Warning Modal -->
+	<div class="modal fade" id="warningModal" tabindex="-1" aria-labelledby="warningModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered mx-auto">
+			<div class="modal-content">
+				<!-- TODO -->
 		</div>
 	</div>
 

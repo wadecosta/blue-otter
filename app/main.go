@@ -29,6 +29,7 @@ func init() {
 
 	err = db.Ping()
 	if err != nil {
+		fmt.Println("Is MySQL running? Please check MySQL!")
         	panic(err.Error())
 	}
 
@@ -544,8 +545,6 @@ func DelCardHandler(w http.ResponseWriter, r *http.Request) {
         }
 
         defer delStmt.Close()
-
-        //http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
 
 func DashboardHandler(w http.ResponseWriter, r *http.Request) {
