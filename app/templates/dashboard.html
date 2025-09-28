@@ -31,7 +31,8 @@
 						<div class="card-header d-flex align-items-center justify-content-between gap-3">
 							<button class="btn btn-sm btn-warning open-edit-sticky-button mb-0" data-modal-id="M-{{.DashID}}" data-title="{{.Title}}" data-description="{{.Description}}" data-id="{{.ID}}">O</button>
 							<p class="mb-0" id="T-{{.DashID}}" value="{{.Title}}">{{.Title}}</p>
-							<button id="{{.ID}}" onclick="postDeleteSticky(this.id)" class="btn btn-sm btn-danger">X</button>
+							<!-- <button id="{{.ID}}" onclick="postDeleteSticky(this.id)" class="btn btn-sm btn-danger">X</button> -->
+							<button class="btn btn-sm btn-danger open-warning-modal-button mb-0" data-id="{{.ID}}" data-type="sticky">X</button>
 						</div>
 						<div class="card-body">
 							<p class="card-text" id="D-{{.DashID}}" value="{{.Description}}">{{.Description}}</p>
@@ -140,7 +141,7 @@
 			<div class="modal-content">
 				<form class="form" id="editStickyForm">
 					<div class="modal-header">
-						<h5 class="modal-title" id="editStickyModalLabel">Edit Sticky Note</h5>
+						<h5 class="modal-title" id="editStickyModalLabel">Edit Note</h5>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
 					</div>
 					<div class="modal-body">
@@ -167,7 +168,7 @@
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-dialog-centered mx-auto">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="addStickyModalLabel">Add Sticky Note</h5>
+					<h5 class="modal-title" id="addStickyModalLabel">Add Note</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<form class="form">
@@ -370,7 +371,18 @@
 	<div class="modal fade" id="warningModal" tabindex="-1" aria-labelledby="warningModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered mx-auto">
 			<div class="modal-content">
-				<!-- TODO -->
+				<form class="form" id="warningForm">
+					<div class="modal-header">
+						<h5 class="modal-title" id="warningModalLabel">Delete Warning</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
+					</div>
+					<div class="modal-body">Click confirm to delete!</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+						<input type="submit" class="btn btn-success" value="Confirm">
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
 
@@ -385,6 +397,7 @@
 	</div>
 
 
+	<script type="text/javascript" src="/static/js/delModal.js"></script>
 	<script type="text/javascript" src="/static/js/addBankAccountModal.js"></script>
 	<script type="text/javascript" src="/static/js/bankAccount.js"></script>
 	<script type="text/javascript" src="/static/js/editBankAccountModal.js"></script>

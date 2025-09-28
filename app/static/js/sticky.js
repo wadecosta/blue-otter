@@ -1,4 +1,6 @@
 function postDeleteSticky(button_id) {
+
+	console.log(`button_id = ${button_id}`);
                         
 	(fetch('/delSticky' , {
 		method: 'POST',
@@ -20,6 +22,4 @@ function postDeleteSticky(button_id) {
 		.catch(error => {
 			console.error('There was a problem with the fetch operation:', error);
 	}));
-
-	console.log(button_id)
 }
