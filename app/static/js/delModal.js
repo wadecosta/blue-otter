@@ -40,11 +40,18 @@ document.addEventListener('DOMContentLoaded', () => {
 function postDelete(type, id) {
 
 	if (type === "sticky") {
-		if (!id || isNaN(id) ) {
+		if (!id || isNaN(id)) {
 			console.error(`Invalid id: ${id}`);
 			return;
 		}
-		postDeleteSticky(id);	
+		postDeleteSticky(id);
+	}
+	else if (type === "bankAccount") {
+		if (!id || isNaN(id)) {
+			console.error(`Invalid id: ${id}`);
+			return;
+		}
+		postDeleteBankAccount(id);
 	}
 	/* TODO : Impliment same feature for other types */
 	else {

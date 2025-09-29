@@ -21,6 +21,4 @@ function postDeleteBankAccount(button_id) {
 			console.error('There was a problem with the fetch operation', error);
 		})
 	);
-
-	console.log(button_id)
 }
